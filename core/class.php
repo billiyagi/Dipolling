@@ -17,17 +17,21 @@ class Dipolling{
         $this->connect_errno = mysqli_connect_errno();
         $this->connect_error = mysqli_connect_error();
     }
-    public function add_table($query, $mode){
-        mysqli_multi_query($this->conn, $query);
+    public function add_table($query){
+        mysqli_query($this->conn, $query);
         return mysqli_affected_rows($this->conn);
-        // if($mode == 'single'){
-        //     mysqli_query($this->conn, $query);
-        //     return mysqli_affected_rows($this->conn);
-        // }elseif($mode == 'multi'){
-        //
-        //     mysqli_multi_query($this->conn, $query);
-        //     return mysqli_affected_rows($this->conn);
-        // }
+    }
+    public function activatePolling($table_name){
+        $result = mysqli_query($this->conn, "SELECT * FROM list_table WHERE name='$table_name'");
+        $rows = mysqli_fetch_assoc($result);
+        $id = $rows['id'];
+        $name = $rows['name'];
+        $active = 1;
+        $query = "UPDATE list_table SET
+                    name='$name',
+                    polling_active=$active WHERE id=$id";
+        mysqli_query($this->conn, $query);
+        return mysqli_affected_rows($this->conn);
     }
 }
 class dipollingTable extends Dipolling{

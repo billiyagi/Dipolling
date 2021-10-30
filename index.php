@@ -1,3 +1,15 @@
+<?php
+require 'core/server.php';
+
+// ambil nama tabel yang kolom polling_active nya = 1
+
+$result = $show_polling->get_Query('SELECT * FROM list_table WHERE polling_active=1');
+$name_active_polling = $show_polling->singleFetch($result);
+$name_active_polling_s = $name_active_polling['name'];
+// Show Polling
+$result_show_active_polling = $show_polling->get_Query("SELECT * FROM " . $name_active_polling);
+$rows_active = $show_polling->loopFetch($result_show_active_polling);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,20 +45,20 @@
                 <!-- form polling -->
                 <form action="" method="get">
                     <div class="mt-5 mb-5 row d-flex">
-                        <?php for($i=0; $i<6; $i++): ?>
+                        <?php foreach($rows_active as $row): ?>
                             <div class="col-sm-4 mt-4">
                                 <!-- card polling -->
                                 <div class="dip-card card" id="ad">
                                     <img src="assets/img/women.jpg" alt="">
                                     <div class="card-title text-center pt-2">
-                                        Person 1
+                                        <?= $row['name']; ?>
                                     </div>
-                                    <input class="dip-check" type="radio" name="pemilihan" value="person<?php echo $i; ?>" id="rad_<?php echo $i; ?>">
-                                    <label for="rad_<?php echo $i; ?>" onclick="btnSubmit()"></label>
-                                    <img src="assets/img/ok.png" alt="Check" class="dip-check-img dip-none">
+                                    <input class="dip-check" type="radio" name="pemilihan" value="person<?= $row['id']; ?>" id="rad_<?= $row['id']; ?>">
+                                    <label for="rad_<?= $row['id']; ?>" onclick="btnSubmit()"></label>
+                                    <img src="assets/img/<?= $row['polling']; ?>" alt="Check" class="dip-check-img dip-none">
                                 </div>
                             </div>
-                        <?php endfor; ?>
+                        <?php endforeach; ?>
                     </div>
                     <div id="submitVote" class="p-2">
                         <button type="submit" name="submit" class="btn btn-lg btn-primary d-block w-100">Konfirmasi</button>

@@ -1,5 +1,4 @@
 <?php
-
 require "template/menu.php";
 
 $sql = "SELECT * FROM list_table";
@@ -8,25 +7,34 @@ $show_polling = new dipollingTable($db_host_name, $db_username, $db_password, $d
 $result = $show_polling->get_Query($sql);
 $rows_list_table = $show_polling->loopFetch($result);
 
+// Tambah Tabel polling
 if(isset($_POST['submit'])){
     $table_name = $_POST['tablename'];
+    $name_lower = strtolower($table_name);
+    $name_replace = str_replace(" ", "_", $name_lower);
+    $table_name_result = $name_replace;
 
-    if(!empty($table_name)){
+    if(!empty($table_name_result)){
 
-        $add_table_query = 'CREATE TABLE '. $table_name .' (id INT AUTO_INCREMENT PRIMARY KEY, polimg VARCHAR(150), polname VARCHAR(200), polvote INT)';
-        $add_table_query .= "INSERT INTO list_table VALUES (NULL, 'oke')";
-        $dipolling->add_table($add_table_query, 'multi');
+        // kueri tambah tabel
+        $add_table_query = 'CREATE TABLE '. $table_name_result .' (id INT AUTO_INCREMENT PRIMARY KEY, polimg VARCHAR(150), polname VARCHAR(200), polvote INT)';
+        $dipolling->add_table($add_table_query);
 
-        die();
-        header("Location: poll.php?name=" . $table_name . "&add=1");
+        //kueri tambah item di list tabel
+        $add_list_table_item = "INSERT INTO list_table VALUES(NULL, '$table_name_result', 0)";
+        $dipolling->add_table($add_list_table_item);
+        header("Location: poll.php?name=" . $table_name_result . "&add=1&activate=0");
 
     }else{
-
+        //Notifikasi error
        echo $notify->showNotify(false, 'Isi kolom nama tabel');
 
     }
 }
 
+if (isset($_GET['activate'])) {
+    echo $notify->showNotify(true,'Tabel ' . $_GET['activate'] . ' aktif');
+}
 ?>
 
     <div class="dib-admin-page-title fs-4 text-dark fw-bold">
@@ -69,6 +77,7 @@ if(isset($_POST['submit'])){
             <th>No</th>
             <th>Name</th>
             <th>Total Vote</th>
+            <th class="text-center">Status</th>
         </tr>
         <?php $i = 1; ?>
         <?php foreach($rows_list_table as $row) :?>
@@ -82,9 +91,26 @@ if(isset($_POST['submit'])){
 
         <tr>
             <td><?php echo $i; ?></td>
-            <td><a href="poll.php?name=<?php echo $row['name']; ?>"><?php echo str_replace("_", " ", $row['name']); ?></a></td>
-            <td><?php $single = $show_polling->singleFetch($res);
-            echo $single['SUM(polvote)'];?></td>
+            <td><a href="poll.php?name=<?php echo $row['name']; ?>&add=0&activate=0"><?php echo str_replace("_", " ", $row['name']); ?></a></td>
+            <td>
+                <?php
+                    $single = $show_polling->singleFetch($res);
+                    if($single['SUM(polvote)'] == ""){
+                        echo 0;
+                    }else {
+                        echo $single['SUM(polvote)'];
+                    }
+                ?>
+            </td>
+            <td class="text-center">
+                <?php
+                if ($row['polling_active'] > 0) {
+                    echo '<i class="bi bi-check-circle text-success"></i>';
+                }else{
+                    echo '<span class="text-secondary">-</span>';
+                }
+                ?>
+            </td>
         </tr>
 
         <?php
