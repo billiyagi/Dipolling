@@ -1,0 +1,207 @@
+/* Utilities */
+.dip-brand{
+    font-family: MatSaleh;
+}
+.dip-btn-question{
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+.dip-notification{
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 2rem;
+    color: #fff;
+    margin: 1rem;
+    display: none;
+    z-index: 999999;
+}
+.dip-notif-red{
+    background-color: rgba(255,0,0,.7);
+}
+.dip-notif-green{
+    background-color: rgba(19,170,0,.7);
+}
+.dip-notif-show{
+    transition: .3s;
+    display: block;
+}
+/* Menu */
+header{
+    position: fixed;
+    width: 210px;
+    padding: 1rem 0;
+    height: 100%;
+    border-right: 1px solid #ddd;
+}
+header .dip-brand{
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+header ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+header li a{
+    text-decoration: none;
+    display: block;
+    padding: 1rem;
+}
+header li a:hover{
+    transition: .3s;
+    padding-left: 1.5rem;
+}
+/* Night mode */
+.dip-mode{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    margin: 1rem;
+}
+.dip-mode button{
+    background-color: #FFF;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    padding: .3rem;
+}
+.dip-mode button i{
+    padding: .3rem;
+}
+/* Admin Content */
+.dib-admin-page-title{
+    margin-bottom: 3rem;
+}
+main{
+    position: relative;
+    display: block;
+    margin-left: 210px;
+    padding: 2rem 3.8rem;
+}
+main .row{
+    --bs-gutter-x: 0 !important;
+}
+/* Dashboard */
+.dip-admin-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ddd;
+    height: 160px;
+    border-radius: 7px;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+}
+.dip-admin-box p{
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 1rem;
+    padding: .5rem;
+    border-bottom-right-radius: 7px;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+.dip-admin-box span{
+    font-weight: bold;
+    font-size: 2rem;
+}
+.dip-total-table p{
+    font-size: 1.3rem;
+}
+.dip-active-polling span{
+    font-size: 2rem;
+    font-weight: bold;
+}
+.dip-active-polling p{
+    font-size: 1.3rem;
+}
+#menuAdminBtn{
+    display: none !important;
+}
+/* Tablet/Ipad Device */
+@media screen and (max-width: 960px){
+    /* menu showing */
+    .dip-menu-show{
+        transition: .3s;
+        transform: translateX(0%);
+    }
+    #logoAdminBtn{
+        position: relative;
+        z-index: -1;
+    }
+    #menuAdminBtn{
+        display: block !important;
+        border: 0;
+        border-top-right-radius: 7px;
+        border-bottom-right-radius: 7px;
+        padding: 1.2rem .1rem;
+        background-color: #333;
+        color: #FFF;
+        font-size: 2rem;
+    }
+    #menuAdminBtn{
+        position: fixed;
+        z-index: 9999;
+        bottom: 30px;
+        right: 0;
+        transform: translateX(101%);
+    }
+    main{
+        position: relative;
+        display: block;
+        margin-left: 0;
+        padding: 2rem 2.7rem;
+    }
+    header{
+        position: fixed;
+        width: 36%;
+        padding: 1rem 0;
+        height: 100%;
+        border-right: 1px solid #ddd;
+        z-index: 9999;
+        transform: translateX(-100%);
+    }
+    .bg-shadow::before{
+        content: '';
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,.6);
+        z-index: 1;
+    }
+}
+/* Mobile Device */
+@media screen and (max-width: 600px){
+    header{
+        position: fixed;
+        width: 70%;
+        padding: 1rem 0;
+        height: 100%;
+        border-right: 1px solid #ddd;
+        z-index: 9999;
+        transform: translateX(-100%);
+    }
+    #menuAdminBtn{
+        display: block !important;
+        border: 0;
+        border-top-right-radius: 7px;
+        border-bottom-right-radius: 7px;
+        padding: 1.2rem .2rem;
+        background-color: #333;
+        color: #FFF;
+        font-size: 2rem;
+    }
+}
+/* Fonts */
+@font-face{
+    font-family: MatSaleh;
+    src: url(../fonts/MatSaleh.woff);
+}

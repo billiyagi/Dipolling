@@ -1,0 +1,111 @@
+/* dip = dipoling */
+/* Utilities */
+.dip-none{
+    display: none;
+}
+.dip-brand{
+    font-family: MatSaleh;
+}
+.dip-no-mar{
+    margin: 0 !important;
+}
+.dip-wd{
+    width: 1024px;
+}
+.dip-mt-8{
+    margin-top: 8rem;
+}
+
+body{
+    font-family: 'Poppins', sans-serif !important;
+    overflow-x: hidden;
+}
+.dip-notification{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(0,0,0,.5);
+    padding: 2rem;
+    color: #fff;
+    margin: 1rem;
+    transform: translateX(120%);
+}
+.dip-notif-show{
+    transition: .3s;
+    transform: translateX(0%);
+}
+/* Form Login */
+.dip-login-container form{
+    margin-top: 9rem;
+    width: 320px;
+}
+.dip-login-container .dip-brand{
+    font-size: 4rem;
+}
+
+/* dipolling vote home page */
+.dip-card{
+    position: relative;
+}
+.dip-check{
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+.dip-card label{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.dip-card .dip-check-img{
+    position: absolute;
+    bottom: 0;
+    left: -20px;
+}
+.dip-check-img{
+    width: 50px;
+}
+.dip-check:checked ~ img{
+    display: block;
+}
+#submitVote{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    background-color: rgba(0,0,0,.5);
+    z-index: 999;
+}
+form #submitVote{
+    display: none;
+}
+/* Footer */
+footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}
+/* Ipad/Tablet Device */
+@media screen and (max-width: 900px){
+    .dip-wd{
+        width: 100%;
+        padding: 0 1.8rem;
+    }
+}
+/* Mobile Device */
+@media screen and (max-width: 600px){
+    .dip-wd{
+        width: 100%;
+        padding: 0 2rem;
+    }
+}
+/* Fonts */
+@font-face{
+    font-family: MatSaleh;
+    src: url(../fonts/MatSaleh.woff);
+}
