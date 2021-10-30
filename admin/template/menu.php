@@ -1,3 +1,4 @@
+<?php require '../core/server.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +60,3 @@
     </button>
 </header>
 <main>
-<!-- Notification -->
-<div class="dip-notification shadow-lg dip-notif-show dip-notif-red" id="notif">
-    username / password salah
-</div>

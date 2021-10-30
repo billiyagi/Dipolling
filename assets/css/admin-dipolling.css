@@ -1,4 +1,7 @@
 /* Utilities */
+.dip-title{
+    text-transform: capitalize;
+}
 .dip-brand{
     font-family: MatSaleh;
 }

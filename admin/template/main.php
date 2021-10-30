@@ -1,13 +1,5 @@
 </main>
 
-<!-- Costum Javascript -->
-<script type="text/javascript">
-    function closeNotif(){
-        document.getElementById('notif').classList.remove('dip-notif-show');
-    }
-
-     window.setTimeout( closeNotif, 5000 );
-</script>
 <!-- Internal Javascript -->
 <script src="../assets/js/dipolling.js"></script>
 
