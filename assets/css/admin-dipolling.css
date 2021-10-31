@@ -1,4 +1,19 @@
 /* Utilities */
+tr{
+    position: relative;
+}
+.dip-delete-item{
+    position: absolute;
+    top: 0;
+    right: 6px;
+    width: 50px;
+    text-align: center;
+    opacity: 0;
+}
+tr:hover .dip-delete-item{
+    transition: .3s;
+    opacity: 1;
+}
 .dip-brand{
     font-family: MatSaleh;
 }
@@ -108,7 +123,8 @@ main .row{
 }
 .dip-admin-box span{
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 1.6rem;
+    text-align: center;
 }
 .dip-total-table p{
     font-size: 1.3rem;

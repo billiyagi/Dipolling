@@ -1,5 +1,10 @@
 /* dip = dipoling */
 /* Utilities */
+.dip-welcome-polling{
+    margin: auto;
+    display: block;
+    width: 40% !important;
+}
 .dip-none{
     display: none;
 }
@@ -46,6 +51,11 @@ body{
 /* dipolling vote home page */
 .dip-card{
     position: relative;
+    height: 100%;
+}
+.dip-card .dip-cover-img{
+    height: 350px;
+    object-fit: cover;
 }
 .dip-check{
     visibility: hidden;
@@ -92,6 +102,11 @@ footer{
 }
 /* Ipad/Tablet Device */
 @media screen and (max-width: 900px){
+    .dip-welcome-polling{
+        margin: auto;
+        display: block;
+        width: 70% !important;
+    }
     .dip-wd{
         width: 100%;
         padding: 0 1.8rem;
@@ -99,6 +114,11 @@ footer{
 }
 /* Mobile Device */
 @media screen and (max-width: 600px){
+    .dip-welcome-polling{
+        margin: auto;
+        display: block;
+        width: 90% !important;
+    }
     .dip-wd{
         width: 100%;
         padding: 0 2rem;

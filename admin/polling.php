@@ -2,7 +2,6 @@
 require "template/menu.php";
 
 $sql = "SELECT * FROM list_table";
-$show_polling = new dipollingTable($db_host_name, $db_username, $db_password, $db_name);
 
 $result = $show_polling->get_Query($sql);
 $rows_list_table = $show_polling->loopFetch($result);
@@ -32,8 +31,21 @@ if(isset($_POST['submit'])){
     }
 }
 
+// cek tabel polling aktif
+$check_active_polling = $show_polling->get_Query("SELECT * FROM list_table WHERE polling_active=1");
+if (mysqli_num_rows($check_active_polling) != 0) {
+    $name_active_polling = $show_polling->singleFetch($check_active_polling);
+    $name_active_polling_s = $name_active_polling['name'];
+}else{
+    $name_active_polling_s = '-';
+}
+
+
+// Notifikasi
 if (isset($_GET['activate'])) {
-    echo $notify->showNotify(true,'Tabel ' . $_GET['activate'] . ' aktif');
+    echo $notify->showNotify(true,'Tabel ' . str_replace('_', ' ', $_GET['table_name']) . ' aktif');
+}elseif(isset($_GET['nonactivate'])){
+    echo $notify->showNotify(true,'Tabel ' . str_replace('_', ' ', $_GET['table_name']) . ' nonaktif');
 }
 ?>
 
@@ -43,11 +55,11 @@ if (isset($_GET['activate'])) {
     <div class="row d-flex justify-content-between">
         <div class="dip-admin-box text-dark col-sm-5 mt-2">
             <p class="text-dark">Total table</p>
-            <span>120</span>
+            <span><?php echo mysqli_num_rows($show_polling->get_Query("SELECT * FROM list_table"));?></span>
         </div>
         <div class="dip-admin-box text-dark col-sm-5 mt-2">
             <p class="text-dark">Polling active <i class="bi bi-patch-check-fill text-success"></i></p>
-            <span>Example pol</span>
+            <span class="text-capitalize"><?= str_replace('_', ' ', $name_active_polling_s); ?></span>
         </div>
     </div>
     <a href="#" class="btn btn-lg btn-success mt-5" data-bs-toggle="modal" data-bs-target="#addPollings"><i class="bi bi-plus-lg"></i> Add Polling</a>
@@ -91,7 +103,7 @@ if (isset($_GET['activate'])) {
 
         <tr>
             <td><?php echo $i; ?></td>
-            <td><a href="poll.php?name=<?php echo $row['name']; ?>&add=0&activate=0"><?php echo str_replace("_", " ", $row['name']); ?></a></td>
+            <td><a href="poll.php?name=<?php echo $row['name']; ?>&add=0"><?php echo str_replace("_", " ", $row['name']); ?></a></td>
             <td>
                 <?php
                     $single = $show_polling->singleFetch($res);

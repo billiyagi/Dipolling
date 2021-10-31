@@ -2,13 +2,29 @@
 require 'core/server.php';
 
 // ambil nama tabel yang kolom polling_active nya = 1
-
 $result = $show_polling->get_Query('SELECT * FROM list_table WHERE polling_active=1');
 $name_active_polling = $show_polling->singleFetch($result);
-$name_active_polling_s = $name_active_polling['name'];
-// Show Polling
-$result_show_active_polling = $show_polling->get_Query("SELECT * FROM " . $name_active_polling);
-$rows_active = $show_polling->loopFetch($result_show_active_polling);
+
+// cek polling yang sedang aktif atau tidak ada polling yang aktif
+if (!empty($name_active_polling)) {
+    $name_active_polling_s = $name_active_polling['name'];
+
+    //Jika $name_active_polling_s tidak NULL(kosong) result akan mengembalikan value dari fungsi loopFetch
+    if (!empty($name_active_polling_s)) {
+        // Show Polling
+        $result_show_active_polling = $show_polling->get_Query("SELECT * FROM $name_active_polling_s");
+        $rows_active = $show_polling->loopFetch($result_show_active_polling);
+    }
+}
+// ambil polling yang dipilih
+if (isset($_GET['submit'])) {
+    $get_poll_id = $_GET['poll'];
+    // Menambahkan +1 ke dalam data row tabel yang dipilih
+    $dipolling->VotePoll($name_active_polling_s, $get_poll_id);
+
+    header("Location: ?success=ok");
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,28 +53,48 @@ $rows_active = $show_polling->loopFetch($result_show_active_polling);
             <a href="login.php" class="btn btn-secondary">Login</a>
         </header>
         <main>
+
             <!-- Container polling -->
             <div class="dip-container-pol dip-mt-8">
                 <div class="dip-title-pol text-center">
-                    <h3>Pemilihan Ketua Osis</h3>
+                <?php if(!isset($_GET['success'])): ?>
+                    <?php if (isset($name_active_polling_s)): ?>
+                        <h3 class="text-capitalize">
+                            <?php echo str_replace('_', ' ', $name_active_polling_s); ?>
+                        </h3>
+                    <?php endif; ?>
+                <?php endif; ?>
                 </div>
+
                 <!-- form polling -->
                 <form action="" method="get">
                     <div class="mt-5 mb-5 row d-flex">
+                    <?php if(!isset($name_active_polling_s)): ?>
+                        <img src="assets/img/undraw_well_done_i2wr.svg" class="dip-welcome-polling">
+                        <h2 class="text-center mt-5">Welcome to Dipolling!</h2>
+                        <p class="text-center text-secondary">This main page to show your polling!</p>
+                    <?php elseif(isset($_GET['success'])): ?>
+                        <div class="text-center">
+                            <img src="assets/img/Balloons.gif" alt="">
+                            <h2>Thank you for participating</h2>
+                        </div>
+                    <?php else: ?>
                         <?php foreach($rows_active as $row): ?>
                             <div class="col-sm-4 mt-4">
+
                                 <!-- card polling -->
                                 <div class="dip-card card" id="ad">
-                                    <img src="assets/img/women.jpg" alt="">
+                                    <img src="assets/img/<?= $row['polimg']; ?>" alt="<?= $row['polname']; ?>" class="dip-cover-img">
                                     <div class="card-title text-center pt-2">
-                                        <?= $row['name']; ?>
+                                        <?= $row['polname']; ?>
                                     </div>
-                                    <input class="dip-check" type="radio" name="pemilihan" value="person<?= $row['id']; ?>" id="rad_<?= $row['id']; ?>">
+                                    <input class="dip-check" type="radio" name="poll" value="<?= $row['id']; ?>" id="rad_<?= $row['id']; ?>">
                                     <label for="rad_<?= $row['id']; ?>" onclick="btnSubmit()"></label>
-                                    <img src="assets/img/<?= $row['polling']; ?>" alt="Check" class="dip-check-img dip-none">
+                                    <img src="assets/img/ok.png" alt="Check" class="dip-check-img dip-none">
                                 </div>
                             </div>
                         <?php endforeach; ?>
+                    <?php endif; ?>
                     </div>
                     <div id="submitVote" class="p-2">
                         <button type="submit" name="submit" class="btn btn-lg btn-primary d-block w-100">Konfirmasi</button>
@@ -68,9 +104,9 @@ $rows_active = $show_polling->loopFetch($result_show_active_polling);
         </main>
         <footer>
             <div class="powered-dipolling">
+                <!-- Do Not remove this Copyright -->
                 <small class="opacity-50 dip-no-mar">Powered by</small>
                 <h1 class="text-secondary dip-brand opacity-50">Dipolling</h1>
-
             </div>
         </footer>
     </div>
