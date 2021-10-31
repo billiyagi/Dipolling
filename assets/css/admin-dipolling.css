@@ -5,8 +5,10 @@ tr{
 .dip-delete-item{
     position: absolute;
     top: 0;
-    right: 6px;
-    width: 50px;
+    right: 0;
+    width: auto;
+    height: 100%;
+    padding: 3px 0;
     text-align: center;
     opacity: 0;
 }

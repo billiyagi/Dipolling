@@ -60,6 +60,7 @@ class Dipolling{
         $result = mysqli_query($this->conn, "UPDATE $table_name SET polvote= polvote + 1 WHERE id=$id_vote");
         return mysqli_affected_rows($this->conn);
     }
+
     // Menambahkan item yang akan di gunakan untuk menyimpan dan menampilkan
     public function addItemPoll($table_name, $get_post){
         $polname = $get_post['polname'];
@@ -77,6 +78,13 @@ class dipollingTable extends Dipolling{
         return $this->query_sql;
     }
 
+    // Menghapus Tabel
+    public function dropTable($query){
+        $result = mysqli_query($this->conn, $query);
+        return 1;
+    }
+
+    // Menghapus fetch
     public function deleteFetch($query){
         mysqli_query($this->conn, $query);
         return $this->query_sql;

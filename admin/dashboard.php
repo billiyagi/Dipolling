@@ -12,4 +12,9 @@
             <span>Example pol</span>
         </div>
     </div>
+    <script src="path/to/chartjs/dist/chart.js"></script>
+    <script>
+        const myChart = new Chart(ctx, {...});
+    </script>
+
 <?php include "template/main.php"; ?>

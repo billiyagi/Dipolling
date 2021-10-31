@@ -1,7 +1,7 @@
 <?php
 require "template/menu.php";
 
-$sql = "SELECT * FROM list_table";
+$sql = "SELECT * FROM list_table ORDER BY polling_active DESC";
 
 $result = $show_polling->get_Query($sql);
 $rows_list_table = $show_polling->loopFetch($result);
@@ -19,10 +19,18 @@ if(isset($_POST['submit'])){
         $add_table_query = 'CREATE TABLE '. $table_name_result .' (id INT AUTO_INCREMENT PRIMARY KEY, polimg VARCHAR(150), polname VARCHAR(200), polvote INT)';
         $dipolling->add_table($add_table_query);
 
-        //kueri tambah item di list tabel
-        $add_list_table_item = "INSERT INTO list_table VALUES(NULL, '$table_name_result', 0)";
-        $dipolling->add_table($add_list_table_item);
-        header("Location: poll.php?name=" . $table_name_result . "&add=1&activate=0");
+        $show_num_rows = $show_polling->get_Query("SELECT * FROM list_table WHERE name='$table_name_result'");
+        var_dump(mysqli_num_rows($show_num_rows));
+
+        if (mysqli_num_rows($show_num_rows) == 0) {
+            //kueri tambah item di list tabel
+            $add_list_table_item = "INSERT INTO list_table VALUES(NULL, '$table_name_result', 0)";
+            $dipolling->add_table($add_list_table_item);
+            header("Location: poll.php?name=" . $table_name_result . "&add=1&activate=0");
+        }else{
+            //Notifikasi error
+           echo $notify->showNotify(false, 'Nama tabel sudah digunakan');
+        }
 
     }else{
         //Notifikasi error
@@ -46,6 +54,8 @@ if (isset($_GET['activate'])) {
     echo $notify->showNotify(true,'Tabel ' . str_replace('_', ' ', $_GET['table_name']) . ' aktif');
 }elseif(isset($_GET['nonactivate'])){
     echo $notify->showNotify(true,'Tabel ' . str_replace('_', ' ', $_GET['table_name']) . ' nonaktif');
+}elseif(isset($_GET['table_delete'])){
+    echo $notify->showNotify(true,'Tabel ' . str_replace('_', ' ', $_GET['table_name']) . ' Dihapus');
 }
 ?>
 
@@ -62,13 +72,15 @@ if (isset($_GET['activate'])) {
             <span class="text-capitalize"><?= str_replace('_', ' ', $name_active_polling_s); ?></span>
         </div>
     </div>
-    <a href="#" class="btn btn-lg btn-success mt-5" data-bs-toggle="modal" data-bs-target="#addPollings"><i class="bi bi-plus-lg"></i> Add Polling</a>
-    <!-- Modal -->
+    <!-- Add Polling button -->
+    <a href="#" class="btn btn-lg btn-success mt-5" data-bs-toggle="modal" data-bs-target="#addPollings"><i class="bi bi-journals"></i> Add Polling</a>
+
+    <!-- Add Polling Modal -->
     <div class="modal fade" id="addPollings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add Polling</h5>
+            <h5 class="modal-title fw-bold" id="exampleModalLabel">Add Polling</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -78,7 +90,7 @@ if (isset($_GET['activate'])) {
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" name="submit" class="btn btn-success">Add Polling</button>
+                <button type="submit" name="submit" class="btn btn-success"><i class="bi bi-journals"></i> Add Polling</button>
               </div>
           </form>
         </div>
@@ -103,9 +115,12 @@ if (isset($_GET['activate'])) {
 
         <tr>
             <td><?php echo $i; ?></td>
-            <td><a href="poll.php?name=<?php echo $row['name']; ?>&add=0"><?php echo str_replace("_", " ", $row['name']); ?></a></td>
+            <td>
+                <a href="poll.php?name=<?php echo $row['name']; ?>&add=0" class="text-decoration-none text-capitalize text-dark"><?php echo str_replace("_", " ", $row['name']); ?></a>
+            </td>
             <td>
                 <?php
+                // Show total polling
                     $single = $show_polling->singleFetch($res);
                     if($single['SUM(polvote)'] == ""){
                         echo 0;
@@ -117,7 +132,7 @@ if (isset($_GET['activate'])) {
             <td class="text-center">
                 <?php
                 if ($row['polling_active'] > 0) {
-                    echo '<i class="bi bi-check-circle text-success"></i>';
+                    echo '<i class="bi bi-check-circle text-success" id="activeTable"></i>';
                 }else{
                     echo '<span class="text-secondary">-</span>';
                 }
