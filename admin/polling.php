@@ -63,11 +63,11 @@ if (isset($_GET['activate'])) {
         <i class="bi bi-bar-chart-line"></i> Polling
     </div>
     <div class="row d-flex justify-content-between">
-        <div class="dip-admin-box text-dark col-sm-5 mt-2">
+        <div class="dip-admin-box text-dark col-sm-5 mt-5">
             <p class="text-dark">Total table</p>
             <span><?php echo mysqli_num_rows($show_polling->get_Query("SELECT * FROM list_table"));?></span>
         </div>
-        <div class="dip-admin-box text-dark col-sm-5 mt-2">
+        <div class="dip-admin-box text-dark col-sm-5 mt-5">
             <p class="text-dark">Polling active <i class="bi bi-patch-check-fill text-success"></i></p>
             <span class="text-capitalize"><?= str_replace('_', ' ', $name_active_polling_s); ?></span>
         </div>
@@ -96,53 +96,56 @@ if (isset($_GET['activate'])) {
         </div>
       </div>
     </div>
-    <table class="table mt-5">
-        <tr class="table-dark">
-            <th>No</th>
-            <th>Name</th>
-            <th>Total Vote</th>
-            <th class="text-center">Status</th>
-        </tr>
-        <?php $i = 1; ?>
-        <?php foreach($rows_list_table as $row) :?>
+    <div class="table-responsive">
+        <table class="table mt-5">
+            <tr class="table-dark">
+                <th>No</th>
+                <th>Polling Name</th>
+                <th>Total Vote</th>
+                <th class="text-center">Status</th>
+            </tr>
+            <?php $i = 1; ?>
+            <?php foreach($rows_list_table as $row) :?>
+
+                <?php
+                // Ambil total keseluruhan dari tabel polling target
+                $name_source_table = $row['name'];
+                $name_source_query = "SELECT SUM(polvote) FROM " . $name_source_table;
+                $res = $show_polling->get_Query($name_source_query);
+                ?>
+
+            <tr>
+                <td><?php echo $i; ?></td>
+                <td>
+                    <a href="poll.php?name=<?php echo $row['name']; ?>&add=0" class="text-decoration-none text-capitalize text-dark dip-see-polling"><?php echo str_replace("_", " ", $row['name']); ?>
+                        <i class="bi bi-box-arrow-in-up-right text-primary"></i>
+                    </a>
+                </td>
+                <td>
+                    <?php
+                    // Show total polling
+                        $single = $show_polling->singleFetch($res);
+                        if($single['SUM(polvote)'] == ""){
+                            echo 0;
+                        }else {
+                            echo $single['SUM(polvote)'];
+                        }
+                    ?>
+                </td>
+                <td class="text-center">
+                    <?php
+                    if ($row['polling_active'] > 0) {
+                        echo '<i class="bi bi-check-circle text-success" id="activeTable"></i>';
+                    }else{
+                        echo '<span class="text-secondary">-</span>';
+                    }
+                    ?>
+                </td>
+            </tr>
 
             <?php
-            // Ambil total keseluruhan dari tabel polling target
-            $name_source_table = $row['name'];
-            $name_source_query = "SELECT SUM(polvote) FROM " . $name_source_table;
-            $res = $show_polling->get_Query($name_source_query);
-             ?>
-
-        <tr>
-            <td><?php echo $i; ?></td>
-            <td>
-                <a href="poll.php?name=<?php echo $row['name']; ?>&add=0" class="text-decoration-none text-capitalize text-dark"><?php echo str_replace("_", " ", $row['name']); ?></a>
-            </td>
-            <td>
-                <?php
-                // Show total polling
-                    $single = $show_polling->singleFetch($res);
-                    if($single['SUM(polvote)'] == ""){
-                        echo 0;
-                    }else {
-                        echo $single['SUM(polvote)'];
-                    }
-                ?>
-            </td>
-            <td class="text-center">
-                <?php
-                if ($row['polling_active'] > 0) {
-                    echo '<i class="bi bi-check-circle text-success" id="activeTable"></i>';
-                }else{
-                    echo '<span class="text-secondary">-</span>';
-                }
-                ?>
-            </td>
-        </tr>
-
-        <?php
-        $i++;
-         endforeach; ?>
+            $i++;
+             endforeach; ?>
     </table>
-
+    </div>
 <?php require "template/main.php"; ?>

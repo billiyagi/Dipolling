@@ -1,4 +1,14 @@
 /* Utilities */
+.table tr{
+    white-space: nowrap !important;
+}
+.dip-see-polling i{
+    opacity: 0;
+}
+.dip-see-polling:hover i{
+    transition: .3s;
+    opacity: 1;
+}
 tr{
     position: relative;
 }

@@ -40,7 +40,7 @@ if (isset($_GET['add_item'])) {
 ?>
 
 <h2 class="mt-4"><span class="text-secondary">Polling: </span> <strong class="text-capitalize"><?php echo str_replace("_", " ", $get_table_name); ?></strong></h2>
-<div class="d-flex justify-content-between">
+<div class="d-sm-flex justify-content-between">
     <a href="poll-item.php?table_name=<?= $get_table_name; ?>&conf=add" class="btn btn-lg btn-primary mt-5">
         <i class="bi bi-plus-lg"></i> Add Polling item
     </a>
@@ -119,31 +119,32 @@ if (isset($_GET['add_item'])) {
     <?php endif; ?>
 
 </div>
-<table class="table mt-5">
-    <tr class="table-dark">
-        <th>No</th>
-        <th>Name</th>
-        <th>Gambar</th>
-        <th>Vote</th>
-    </tr>
-    <?php $i = 1; ?>
-    <?php foreach($rows_list_table as $row) :?>
+<div class="table-responsive">
+    <table class="table mt-5">
+        <tr class="table-dark">
+            <th>No</th>
+            <th>Name</th>
+            <th>Gambar</th>
+            <th>Vote</th>
+        </tr>
+        <?php $i = 1; ?>
+        <?php foreach($rows_list_table as $row) :?>
 
-    <tr>
-        <td><?php echo $i; ?></td>
-        <td><?php echo $row['polname']; ?></td>
-        <td><?php echo $row['polimg']; ?></td>
-        <td><?php echo $row['polvote']; ?>
-            <div class="d-flex dip-delete-item ">
-                <a href="poll-item.php?conf=edit&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>" class="btn btn-primary rounded me-2"><i class="bi bi-x-circle"></i> Edit</a>
-                <a href="poll-item.php?conf=delete&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>" class="btn btn-danger rounded"><i class="bi bi-x-circle"></i> Delete</a>
-            </div>
-        </td>
-    </tr>
+        <tr>
+            <td><?php echo $i; ?></td>
+            <td><?php echo $row['polname']; ?></td>
+            <td><?php echo $row['polimg']; ?></td>
+            <td><?php echo $row['polvote']; ?>
+                <div class="d-flex dip-delete-item ">
+                    <a href="poll-item.php?conf=edit&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>" class="btn btn-primary rounded me-2"><i class="bi bi-x-circle"></i> Edit</a>
+                    <a href="poll-item.php?conf=delete&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>" class="btn btn-danger rounded"><i class="bi bi-x-circle"></i> Delete</a>
+                </div>
+            </td>
+        </tr>
 
-    <?php
-    $i++;
-     endforeach; ?>
-</table>
-
+        <?php
+        $i++;
+         endforeach; ?>
+    </table>
+</div>
 <?php require "template/main.php"; ?>

@@ -2,7 +2,17 @@
     $conf = $_GET['conf'];
     $table_name = $_GET['table_name'];
     if (isset($_POST['addsubmit'])) {
+
+        $dipMediaFotoExtension = ['jpg', 'png', 'jpeg'];
+        $dipMedia = new dipollingMedia($_FILES, '../assets/img/pollimg/', $dipMediaFotoExtension, 10000);
+
+        // input tipe media sebagai 'img'
+        $dipMedia->addMedia('img');
+
+        // Upload File
         $dipolling->addItemPoll($table_name, $_POST);
+
+        // redirect
         header("Location: poll.php?name=$table_name&add=0&add_item=success");
     }
 ?>
@@ -15,7 +25,7 @@
     <h2 class="fw-bold mb-5 text-capitalize"><span class="text-secondary">Add Item :</span> <?php echo str_replace("_", " ", $table_name); ?></h2>
     <hr>
     <p>&nbsp;</p>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         <label for="" class="control-label mb-3">Name</label>
         <input type="text" name="polname" class="form-control" placeholder="Poll item name">
         <label for="" class="control-label mb-3 mt-3">Item image</label>
