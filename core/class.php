@@ -8,8 +8,7 @@ class Dipolling{
            $db_name,
            $conn,
            $connect_errno,
-           $connect_error,
-           $result_files;
+           $connect_error;
 
     /*
     Primary function mengandung:
@@ -63,12 +62,10 @@ class Dipolling{
     }
 
     // Menambahkan item yang akan di gunakan untuk menyimpan dan menampilkan
-    public function addItemPoll($table_name, $get_post){
+    public function addItemPoll($table_name, $get_post, $polimg){
         $polname = $get_post['polname'];
-        $polimg = $this->result_files;
         $sql = "INSERT INTO $table_name VALUES(NULL, '$polimg', '$polname', 0)";
         $result = mysqli_query($this->conn, $sql);
-        return $polimg;
     }
 }
 class dipollingMedia extends Dipolling{
@@ -106,20 +103,20 @@ class dipollingMedia extends Dipolling{
             $get_max_size = $this->size;
 
             // cek file apakah kosong atau tidak
-            if ($file_error == 4) {
-                return $this->result_files = false;
+            if ($file_error === 4) {
+                return 'ksong';
             }
 
             // cek ekstensi upload
             $result_extension = explode('.', $file_name);
             $result_extension = strtolower(end($result_extension));
             if (!in_array($result_extension, $get_extension)) {
-                return $this->result_files = false;
+                return 'extensi';
             }
 
             // cek ukuran file
             if ($file_size > $get_max_size) {
-                return $this->result_files = false;
+                return 'size';
             }
 
             // Buat Nama File baru
@@ -131,13 +128,11 @@ class dipollingMedia extends Dipolling{
             move_uploaded_file($file_tmp, $get_directory . $final_result_extension);
 
             // kembalikan nilai ke result file
-            return $this->result_files = $final_result_extension;
+            return $final_result_extension;
 
-        }else{
-            $this->result_files = false;
         }
-
-        // return $this->result_files = false;
+        // return $this->result_files = $final_result_extension;
+        return $final_result_extension;
     }
 }
 class dipollingTable extends Dipolling{

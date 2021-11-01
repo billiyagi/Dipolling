@@ -1,16 +1,17 @@
 <?php require "template/menu.php";
     $conf = $_GET['conf'];
     $table_name = $_GET['table_name'];
+
+
     if (isset($_POST['addsubmit'])) {
 
         $dipMediaFotoExtension = ['jpg', 'png', 'jpeg'];
-        $dipMedia = new dipollingMedia($_FILES, '../assets/img/pollimg/', $dipMediaFotoExtension, 10000);
-
-        // input tipe media sebagai 'img'
-        $dipMedia->addMedia('img');
+        $dipMedia = new dipollingMedia($_FILES, '../assets/img/pollimg/', $dipMediaFotoExtension, 1000000);
 
         // Upload File
-        $dipolling->addItemPoll($table_name, $_POST);
+        if (!$dipolling->addItemPoll($table_name, $_POST, $dipMedia->addMedia('img'))) {
+            echo $notify->showNotify(false, 'Tambah Item gagal' . $dipMedia->addMedia('img'));
+        }
 
         // redirect
         header("Location: poll.php?name=$table_name&add=0&add_item=success");
@@ -37,8 +38,9 @@
     <?php elseif ($conf === 'delete'): ?>
         <?php
         $id_item = $_GET['id'];
+        $img_item = $_GET['img'];
         $show_polling->deleteFetch("DELETE FROM $table_name WHERE id=$id_item");
-
+        unlink('../assets/img/pollimg/'. $img_item);
         header("Location: poll.php?name=$table_name&add=0&delete_item=1");
         ?>
     <?php elseif ($conf === 'edit'): ?>

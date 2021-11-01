@@ -44,8 +44,9 @@ if (isset($_GET['add_item'])) {
     <a href="poll-item.php?table_name=<?= $get_table_name; ?>&conf=add" class="btn btn-lg btn-primary mt-5">
         <i class="bi bi-plus-lg"></i> Add Polling item
     </a>
+
     <!-- Ketika polling sudah aktif dan tombol untuk menonaktifkannya -->
-    <?php if($get_table_name == $name_active_polling_s): ?>
+    <?php if($get_table_name === $name_active_polling_s): ?>
         <div class="btn-group">
             <a href="poll-edit.php?name=<?= $get_table_name; ?>&stat=nonactive" class="btn btn-lg btn-danger mt-5">
                 <i class="bi bi-x-circle"></i> Non-Active
@@ -54,8 +55,9 @@ if (isset($_GET['add_item'])) {
                 <i class="bi bi-x-circle"></i> Delete
             </a>
         </div>
+
     <!-- Ketika polling belum ada yang aktif -->
-    <?php elseif($name_active_polling_s == 0): ?>
+    <?php elseif($name_active_polling_s === 0): ?>
 
 
         <div class="btn-group">
@@ -137,7 +139,7 @@ if (isset($_GET['add_item'])) {
             <td><?php echo $row['polvote']; ?>
                 <div class="d-flex dip-delete-item ">
                     <a href="poll-item.php?conf=edit&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>" class="btn btn-primary rounded me-2"><i class="bi bi-x-circle"></i> Edit</a>
-                    <a href="poll-item.php?conf=delete&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>" class="btn btn-danger rounded"><i class="bi bi-x-circle"></i> Delete</a>
+                    <a href="poll-item.php?conf=delete&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>&img=<?= $row['polimg']; ?>" class="btn btn-danger rounded"><i class="bi bi-x-circle"></i> Delete</a>
                 </div>
             </td>
         </tr>

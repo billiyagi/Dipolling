@@ -1,4 +1,14 @@
 /* Utilities */
+.dip-float-total-polling{
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-top-left-radius: 5px;
+    width: 50px;
+}
 .table tr{
     white-space: nowrap !important;
 }

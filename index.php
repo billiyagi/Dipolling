@@ -17,12 +17,12 @@ if (!empty($name_active_polling)) {
     }
 }
 // ambil polling yang dipilih
-if (isset($_GET['submit'])) {
-    $get_poll_id = $_GET['poll'];
+if (isset($_POST['submit'])) {
+    $get_poll_id = $_POST['poll'];
     // Menambahkan +1 ke dalam data row tabel yang dipilih
     $dipolling->VotePoll($name_active_polling_s, $get_poll_id);
 
-    header("Location: ?success=ok");
+    $vote_success = true;
 }
 
 ?>
@@ -57,9 +57,9 @@ if (isset($_GET['submit'])) {
             <!-- Container polling -->
             <div class="dip-container-pol dip-mt-8">
                 <div class="dip-title-pol text-center">
-                <?php if(!isset($_GET['success'])): ?>
+                <?php if(!isset($vote_success)): ?>
                     <?php if (isset($name_active_polling_s)): ?>
-                        <h3 class="text-capitalize">
+                        <h3 class="text-capitalize fw-bold">
                             <?php echo str_replace('_', ' ', $name_active_polling_s); ?>
                         </h3>
                     <?php endif; ?>
@@ -67,24 +67,24 @@ if (isset($_GET['submit'])) {
                 </div>
 
                 <!-- form polling -->
-                <form action="" method="get">
+                <form action="" method="post">
                     <div class="mt-5 mb-5 row d-flex">
                     <?php if(!isset($name_active_polling_s)): ?>
                         <img src="assets/img/undraw_well_done_i2wr.svg" class="dip-welcome-polling">
                         <h2 class="text-center mt-5">Welcome to Dipolling!</h2>
                         <p class="text-center text-secondary">This main page to show your polling!</p>
-                    <?php elseif(isset($_GET['success'])): ?>
+                    <?php elseif(isset($vote_success)): ?>
                         <div class="text-center">
                             <img src="assets/img/Balloons.gif" alt="">
                             <h2>Thank you for participating</h2>
                         </div>
                     <?php else: ?>
                         <?php foreach($rows_active as $row): ?>
-                            <div class="col-sm-4 mt-4">
+                            <div class="col-lg-4 mt-4">
 
                                 <!-- card polling -->
                                 <div class="dip-card card" id="ad">
-                                    <img src="assets/img/<?= $row['polimg']; ?>" alt="<?= $row['polname']; ?>" class="dip-cover-img">
+                                    <img src="assets/img/pollimg/<?= $row['polimg']; ?>" alt="<?= $row['polname']; ?>" class="dip-cover-img">
                                     <div class="card-title text-center pt-2">
                                         <?= $row['polname']; ?>
                                     </div>

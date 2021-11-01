@@ -24,7 +24,7 @@ if(isset($_POST['submit'])){
 
         if (mysqli_num_rows($show_num_rows) == 0) {
             //kueri tambah item di list tabel
-            $add_list_table_item = "INSERT INTO list_table VALUES(NULL, '$table_name_result', 0)";
+            $add_list_table_item = "INSERT INTO list_table VALUES(NULL, '$table_name_result', 0, -1)";
             $dipolling->add_table($add_list_table_item);
             header("Location: poll.php?name=" . $table_name_result . "&add=1&activate=0");
         }else{
@@ -65,15 +65,38 @@ if (isset($_GET['activate'])) {
     <div class="row d-flex justify-content-between">
         <div class="dip-admin-box text-dark col-sm-5 mt-5">
             <p class="text-dark">Total table</p>
-            <span><?php echo mysqli_num_rows($show_polling->get_Query("SELECT * FROM list_table"));?></span>
+            <span>
+                <?php 
+                echo mysqli_num_rows($show_polling->get_Query("SELECT * FROM list_table"));?>
+                </span>
         </div>
         <div class="dip-admin-box text-dark col-sm-5 mt-5">
             <p class="text-dark">Polling active <i class="bi bi-patch-check-fill text-success"></i></p>
             <span class="text-capitalize"><?= str_replace('_', ' ', $name_active_polling_s); ?></span>
+            <div class="dip-float-total-polling">
+                    <strong class="fs-3 d-block">
+                        <?php
+                    // Ambil total keseluruhan dari tabel polling target
+                    $name_source_query = "SELECT SUM(polvote) FROM " . $name_active_polling_s;
+                    // var_dump($name_active_polling_s);
+                        if ($name_active_polling_s !== "-") {
+                            $res = $show_polling->get_Query($name_source_query);
+                            // Show total polling
+                            $single = $show_polling->singleFetch($res);
+                            if($single == NULL){
+                                echo 0;
+                            }else {
+                                echo $single['SUM(polvote)'];
+                            }
+                        }
+                    ?>
+                    </strong>
+            </div>
         </div>
     </div>
+
     <!-- Add Polling button -->
-    <a href="#" class="btn btn-lg btn-success mt-5" data-bs-toggle="modal" data-bs-target="#addPollings"><i class="bi bi-journals"></i> Add Polling</a>
+    <a href="#" class="btn btn-lg btn-success mt-5" data-bs-toggle="modal" data-bs-target="#addPollings"><i class="bi bi-bar-chart-line"></i> Add Polling</a>
 
     <!-- Add Polling Modal -->
     <div class="modal fade" id="addPollings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
