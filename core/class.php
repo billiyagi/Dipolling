@@ -64,8 +64,99 @@ class Dipolling{
     // Menambahkan item yang akan di gunakan untuk menyimpan dan menampilkan
     public function addItemPoll($table_name, $get_post, $polimg){
         $polname = $get_post['polname'];
-        $sql = "INSERT INTO $table_name VALUES(NULL, '$polimg', '$polname', 0)";
+        if ($polimg) {
+            $sql = "INSERT INTO $table_name VALUES(NULL, '$polimg', '$polname', 0)";
+            $result = mysqli_query($this->conn, $sql);
+        }else{
+            return false;
+        }
+    }
+
+    // edit item polling
+    public function editItemPoll($table_name, $get_post, $polimg){
+        $polid = $get_post['polid'];
+        $polname = $get_post['polname'];
+
+        // jika gambar baru kosong berikan file gambar lama
+        if ($polimg == false) {
+            $polimg = $get_post['oldpolimg'];
+        }
+        
+        $sql = "UPDATE $table_name SET 
+                id='$polid', 
+                polname='$polname',
+                polimg='$polimg' WHERE id='$polid' ";
         $result = mysqli_query($this->conn, $sql);
+    }
+
+    // settings
+    public function updateSettings($post, $site_icon){
+
+        $site_name = $post['site_name'];
+        $site_api_smtp = $post['site_api_smtp'];
+        $site_hide_login = $post['site_hide_login'];
+        $site_maintenance = $post['site_maintenance'];
+        $old_icon = $post['old_icon'];
+
+        if ($site_icon == false) {
+            $site_icon = $post['old_icon'];
+        }
+        if (isset($site_hide_login)) {
+            $site_hide_login = 1;
+        }else{
+            $site_hide_login = -1;
+        }
+        if (isset($site_maintenance)) {
+            $site_maintenance = 1;
+        }else{
+            $site_maintenance = -1;
+        }
+        $sql = "UPDATE dipolling_settings SET 
+                site_name='$site_name',
+                site_icon='$site_icon',
+                site_smtp='$site_api_smtp',
+                site_hide_login=$site_hide_login,
+                site_maintenance=$site_maintenance WHERE settings_profile='primary'";
+        $result = mysqli_query($this->conn, $sql);
+    }
+    public function updateSelectPollImg($post, $site_icon){
+        $old_icon = $post['old_icon'];
+
+        if ($site_icon == false) {
+            $site_icon = $post['old_icon'];
+        }
+        $sql = "UPDATE dipolling_settings SET 
+                site_poll_icon='$site_icon' WHERE settings_profile='primary'";
+        $result = mysqli_query($this->conn, $sql);
+    }
+
+
+    public function loginSystem($post){
+        // Fetch & Filter
+        $login_username = htmlspecialchars($post['username']);
+        $login_password = htmlspecialchars($post['password']);
+
+        $query = "SELECT * FROM dipolling_users WHERE username='$login_username'";
+
+        $result = mysqli_query($this->conn, $query);
+        $fetch = mysqli_fetch_assoc($result);
+
+        // cek username
+        if (mysqli_num_rows($result) == 1) {
+            
+            // cek Password
+            if (password_verify($login_password, $fetch['password'])) {
+                return true;
+                
+            }else{
+                // return kesalahan password
+                return 'password';
+            }
+
+        }else{
+            // return kesalahan username
+            return 'username';
+        }
     }
 }
 class dipollingMedia extends Dipolling{
@@ -104,19 +195,19 @@ class dipollingMedia extends Dipolling{
 
             // cek file apakah kosong atau tidak
             if ($file_error === 4) {
-                return 'ksong';
+                return false;
             }
 
             // cek ekstensi upload
             $result_extension = explode('.', $file_name);
             $result_extension = strtolower(end($result_extension));
             if (!in_array($result_extension, $get_extension)) {
-                return 'extensi';
+                return false;
             }
 
             // cek ukuran file
             if ($file_size > $get_max_size) {
-                return 'size';
+                return false;
             }
 
             // Buat Nama File baru

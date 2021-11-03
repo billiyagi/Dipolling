@@ -1,4 +1,46 @@
 /* Utilities */
+.dip-empty-polling{
+    width: 100%;
+    text-align: center;
+}
+.dip-empty-polling img{
+    width: 200px;
+    display: block;
+    margin: auto;
+}
+.dip-current-img{
+    width: 350px;
+    position: relative;
+}
+.dip-current-img img{
+    width: 100%;
+    display: block;
+}
+.dip-current-site-icon{
+    width: 150px;
+    position: relative;
+}
+.dip-current-site-icon img{
+    width: 100%;
+    display: block;
+}
+.dip-current-site-icon label{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.dip-current-img label{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.dip-float-admin-box{
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+}
 .dip-float-total-polling{
     text-align: center;
     position: absolute;
@@ -23,13 +65,6 @@ tr{
     position: relative;
 }
 .dip-delete-item{
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: auto;
-    height: 100%;
-    padding: 3px 0;
-    text-align: center;
     opacity: 0;
 }
 tr:hover .dip-delete-item{
@@ -213,7 +248,7 @@ main .row{
         width: 100%;
         height: 100%;
         background-color: rgba(0,0,0,.6);
-        z-index: 1;
+        z-index: 9;
     }
 }
 /* Mobile Device */

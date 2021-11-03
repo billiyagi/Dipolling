@@ -20,7 +20,6 @@ if(isset($_POST['submit'])){
         $dipolling->add_table($add_table_query);
 
         $show_num_rows = $show_polling->get_Query("SELECT * FROM list_table WHERE name='$table_name_result'");
-        var_dump(mysqli_num_rows($show_num_rows));
 
         if (mysqli_num_rows($show_num_rows) == 0) {
             //kueri tambah item di list tabel
@@ -78,7 +77,7 @@ if (isset($_GET['activate'])) {
                         <?php
                     // Ambil total keseluruhan dari tabel polling target
                     $name_source_query = "SELECT SUM(polvote) FROM " . $name_active_polling_s;
-                    // var_dump($name_active_polling_s);
+                    
                         if ($name_active_polling_s !== "-") {
                             $res = $show_polling->get_Query($name_source_query);
                             // Show total polling
@@ -119,6 +118,12 @@ if (isset($_GET['activate'])) {
         </div>
       </div>
     </div>
+<?php if (!$rows_list_table): ?>
+    <div class="dip-empty-polling mt-5 mb-5">
+        <img src="../assets/img/mg/undraw_no_data_re_kwbl.svg" alt="No data">
+        <span class="fw-bold fs-4 text-secondary mt-3 d-block">Create your Polling now!</span>
+    </div>
+<?php else: ?>
     <div class="table-responsive">
         <table class="table mt-5">
             <tr class="table-dark">
@@ -171,4 +176,5 @@ if (isset($_GET['activate'])) {
              endforeach; ?>
     </table>
     </div>
+<?php endif; ?>
 <?php require "template/main.php"; ?>

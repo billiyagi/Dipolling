@@ -1,5 +1,14 @@
 /* dip = dipoling */
 /* Utilities */
+.dip-maintenance{
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+    display: block;
+    width: 350px;
+}
+.dip-maintenance img{
+    width: 100%;
+}
 .dip-welcome-polling{
     margin: auto;
     display: block;
@@ -102,6 +111,10 @@ footer{
 }
 /* Ipad/Tablet Device */
 @media screen and (max-width: 900px){
+    .dip-maintenance{
+        display: block;
+        width: 100%;
+    }
     .dip-welcome-polling{
         margin: auto;
         display: block;
