@@ -10,7 +10,7 @@ $settings = $show_polling->singleFetch($result_settings_sql);
 if (isset($_POST['submit'])) {
 
     $dipMediaFotoExtension = ['jpg', 'png', 'jpeg'];
-    $dipMedia = new dipollingMedia($_FILES, '../assets/img/', $dipMediaFotoExtension, 1000000);
+    $dipMedia = new dipollingMedia($_FILES, '../assets/img/', $dipMediaFotoExtension, 5000000);
 
     if ($_FILES['polimg']['name']) {
         unlink('../assets/img/' .  $_POST['old_icon']);

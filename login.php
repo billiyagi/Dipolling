@@ -8,7 +8,7 @@ if (isset($_SESSION['login'])) {
 }
 
 if (isset($_POST['submit'])) {
-    $result_login = $dipolling->loginSystem($_POST);
+    $result_login = $dipolling->loginSystem($_POST, 'login');
     if ($result_login === true) {
         var_dump($result_login);
         
@@ -20,7 +20,7 @@ if (isset($_POST['submit'])) {
         header("Location: admin/dashboard.php");
     }elseif($result_login === 'username'){
 
-        echo $notify->showNotify(false, "username Salah");
+        echo $notify->showNotify(false, "Akun tidak ditemukan");
 
     }elseif($result_login === 'password'){
 
@@ -83,11 +83,11 @@ if (isset($_POST['submit'])) {
                 <input type="text" name="username" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" autofocus value="<?php 
                 if(isset($_POST['username'])){
                  echo $_POST['username'];
-             } ?>">
+             } ?>" required>
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-key-fill"></i></span>
-                <input type="password" name="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon2">
+                <input type="password" name="password" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon2" required>
             </div>
             <button type="submit" name="submit" class="btn btn-primary w-100 fw-bold">Login</button>
         </form>

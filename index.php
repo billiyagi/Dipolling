@@ -1,6 +1,8 @@
 <?php
 require 'core/server.php';
-
+if (isset($db_error)) {
+    header("Location: instalation");
+}
 // ambil nama tabel yang kolom polling_active nya = 1
 $result = $show_polling->get_Query('SELECT * FROM list_table WHERE polling_active=1');
 $name_active_polling = $show_polling->singleFetch($result);

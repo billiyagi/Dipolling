@@ -8,7 +8,8 @@ class Dipolling{
            $db_name,
            $conn,
            $connect_errno,
-           $connect_error;
+           $connect_error,
+           $affected_rows;
 
     /*
     Primary function mengandung:
@@ -24,6 +25,35 @@ class Dipolling{
         $this->conn = mysqli_connect($host, $username, $password, $db_name);
         $this->connect_errno = mysqli_connect_errno();
         $this->connect_error = mysqli_connect_error();
+        $this->affected_rows = mysqli_affected_rows($this->conn);
+    }
+    // Add user from instalation
+    public function addUserInstall($post){
+        $name_account = htmlspecialchars($post['name_account']);
+        $email_account = htmlspecialchars($post['email_account']);
+        $username_account = htmlspecialchars($post['username_account']);
+        $password_account = htmlspecialchars($post['password_account']);
+
+        // Enkripsi
+        $result_password = password_hash($password_account, PASSWORD_BCRYPT);
+
+        $query_account = "INSERT INTO dipolling_users VALUES(NULL, '$email_account', '$name_account' ,'$username_account', '$result_password')";
+
+        mysqli_query($this->conn, $query_account);
+        if ($this->affected_rows > 0) {
+            return true;
+        }
+    }
+
+    // Add settings
+    public function addSettings($post, $icon){
+        $site_name = $post['site_name'];
+        $min = -1;
+        $query_settings = "INSERT INTO dipolling_settings VALUES('primary', '$site_name', '$icon', '', 'ok.png', $min, $min)";
+        mysqli_query($this->conn, $query_settings);
+        if (is_null($this->affected_rows)) {
+            return true;
+        }
     }
 
     // Menambahkan tabel polling dengan membutuhkan parameternya queri SQL
@@ -131,31 +161,59 @@ class Dipolling{
     }
 
 
-    public function loginSystem($post){
+    public function loginSystem($post, $mode){
         // Fetch & Filter
         $login_username = htmlspecialchars($post['username']);
         $login_password = htmlspecialchars($post['password']);
 
-        $query = "SELECT * FROM dipolling_users WHERE username='$login_username'";
+        if ($mode == 'login') {
 
-        $result = mysqli_query($this->conn, $query);
-        $fetch = mysqli_fetch_assoc($result);
+            $query = "SELECT * FROM dipolling_users WHERE username='$login_username'";
 
-        // cek username
-        if (mysqli_num_rows($result) == 1) {
-            
-            // cek Password
-            if (password_verify($login_password, $fetch['password'])) {
-                return true;
+            $result = mysqli_query($this->conn, $query);
+            $fetch = mysqli_fetch_assoc($result);
+
+            // cek username
+            if (mysqli_num_rows($result) == 1) {
                 
-            }else{
-                // return kesalahan password
-                return 'password';
-            }
+                // cek Password
+                if (password_verify($login_password, $fetch['password'])) {
+                    return true;
+                    
+                }else{
+                    // return kesalahan password
+                    return 'password';
+                }
 
-        }else{
-            // return kesalahan username
-            return 'username';
+            }else{
+                // return kesalahan username
+                return 'username';
+            }
+        }elseif($mode == 'update'){
+            $update_email = htmlspecialchars($post['email']);
+            $update_name = htmlspecialchars($post['name']);
+            $update_username = htmlspecialchars($post['username']);
+            // cek kekosongan password
+            if ($post['password'] !== "") {
+                // buat password baru
+                $update_password = htmlspecialchars($post['password']);
+                // enkripsi password
+                $result_password = password_hash($update_password, PASSWORD_BCRYPT);
+            }else{
+                // gunakan password lama
+                $result_password = $post['hashpw'];
+            }
+            
+
+            
+
+            $query = "UPDATE dipolling_users SET 
+                    email='$update_email',
+                    name='$update_name',
+                    password='$result_password' WHERE username='$update_username' ";
+
+            $result = mysqli_query($this->conn, $query);
+            return true;
         }
     }
 }
