@@ -1,4 +1,5 @@
 <?php
+ob_start();
 class Dipolling{
 
     // Primary property
@@ -352,3 +353,4 @@ class Notification extends Dipolling{
         }
     }
 }
+ob_flush();

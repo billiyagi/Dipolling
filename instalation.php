@@ -1,3 +1,4 @@
+<?php ob_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,6 +18,7 @@
 			</div>
 			<div class="card p-5 w-100">
 			<?php if (isset($_GET['part'])): ?>
+				
 				<?php if ($_GET['part'] === 'database'): ?>
 					<?php
 						if (isset($_POST['submit_database'])) {
@@ -25,14 +27,12 @@
 							$database_username = $_POST['database_username'];
 							$database_password = $_POST['database_password'];
 							$myfile = fopen("core/config.php", "w");
-$txt = "
-<?php
+$txt = "<?php
 $"."db_host_name = '$host';
 $"."db_username = '$database_username';
 $"."db_password = '$database_password';
 $"."db_name = '$database_name';
-?>
-";
+?>";
 							fwrite($myfile, $txt);
 							fclose($myfile);
 							require 'core/config.php';
@@ -54,6 +54,9 @@ $"."db_name = '$database_name';
 							mysqli_query($conn, $query_dipolling_settings);
 
 							header("Location: instalation?part=account");
+							echo '
+    <script>window.location.href = "instalation?part=account"</script>
+    ';
 						}
 					?>
 
@@ -82,13 +85,8 @@ $"."db_name = '$database_name';
 						<button type="submit" name="submit_database" class="btn btn-primary w-100 mt-4">Next</button>
 					</form>
 				<?php elseif($_GET['part'] === 'account'): ?>
-					<?php 
-						require 'core/server.php';
-						if (isset($db_error)) {
-							header("Location: instalation");
-						}
-					?>
 					<?php if(isset($_POST['submit_account'])){
+							require 'core/server.php';
 						if (is_null($dipolling->addUserInstall($_POST))) {
 							header("Location: instalation?part=settings");
 						}else{
@@ -120,27 +118,30 @@ $"."db_name = '$database_name';
 						<button type="submit" name="submit_account" class="btn btn-primary w-100">Next</button>
 					</form>
 				<?php elseif($_GET['part'] === 'settings'): ?>
-					<?php 
-						require 'core/server.php';
-						if (isset($db_error)) {
-							header("Location: instalation");
-						}
-					?>
 					<?php if(isset($_POST['submit_settings'])){
+						require 'core/server.php';
 						$dipMediaFotoExtension = ['jpg', 'png', 'jpeg'];
 
 						$media = new dipollingMedia($_FILES, 'assets/img/', $dipMediaFotoExtension, 5000000);
 
 						if ($img = $media->addMedia('img')) {
 							if (is_null($dipolling->addSettings($_POST, $img))) {
-
 								$instalation_success = true;
-								header("Location: login");
 							}else{
 								echo $notify->showNotify(false, "Tambah settings gagal");
 							}
 						}
 					} ?>
+					<?php if (isset($instalation_success)): ?>
+					<div class="text-center">
+						<i class="bi bi-check-circle fw-bold fs-1 text-success"></i>
+						<span class="fs-4 fw-bold d-block mt-2">Instalation Successful!</span>
+						<small class="text-secondary mb-4 d-block">
+							Thank you for using this software
+						</small>
+						<a href="login" class="btn btn-primary w-100">Let's Make Some Polling</a>
+					</div>
+					<?php else: ?>
 					<!-- Site Settings -->
 					<h2 class="text-center">Site Settings</h2>
 					<p class="text-secondary mb-4 text-center">This settings can be changed on dashboard</p>
@@ -167,24 +168,20 @@ $"."db_name = '$database_name';
 						<!-- Submit Settings -->
 						<button type="submit" name="submit_settings" class="btn btn-primary w-100 mt-3">Install</button>
 					</form>
+					<?php endif ?>
 				<?php endif; ?>
-			<?php elseif(isset($instalation_success)): ?>
-				<div class="text-center">
-					<i class="bi bi-check-circle fw-bold fs-1 text-success"></i>
-					<span class="fs-4 fw-bold d-block mt-2">Instalation Successful!</span>
-					<small class="text-secondary mb-4 d-block">
-						Thank you for using this software
-					</small>
-					<a href="login" class="btn btn-primary w-100">Let's Make Some Polling</a>
-				</div>
+			<?php 
+			require 'core/server.php';
+			elseif($db_error === false): ?>
+				<?php header("Location: index"); ?>
 			<?php else: ?>
-				<?php header("Location: instalation?part=database") ?>
+				<?php header("Location: instalation?part=database"); ?>
 			<?php endif ?>
 			</div>
 		</div>
 	</div>
 <!-- Internal Javascript -->
 <script src="../assets/js/dipolling.js"></script>
-
+<?php ob_flush(); ?>
 </body>
 </html>

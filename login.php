@@ -1,16 +1,17 @@
-<?php 
+<?php
 require 'core/server.php';
 
 // Cek Session
 session_start();
+ob_start();
 if (isset($_SESSION['login'])) {
     header("Location: admin/dashboard.php");
+    
 }
 
 if (isset($_POST['submit'])) {
     $result_login = $dipolling->loginSystem($_POST, 'login');
     if ($result_login === true) {
-        var_dump($result_login);
         
         //set Session
         $_SESSION['login'] = true;
@@ -18,6 +19,7 @@ if (isset($_POST['submit'])) {
 
         // // Redirect
         header("Location: admin/dashboard.php");
+        
     }elseif($result_login === 'username'){
 
         echo $notify->showNotify(false, "Akun tidak ditemukan");
@@ -93,5 +95,6 @@ if (isset($_POST['submit'])) {
         </form>
     </div>
 </div>
+<?php ob_flush(); ?>
 </body>
 </html>

@@ -127,6 +127,9 @@ footer{
 }
 /* Mobile Device */
 @media screen and (max-width: 600px){
+    .dip-thank-you img{
+        width: 100%;
+    }
     .dip-welcome-polling{
         margin: auto;
         display: block;

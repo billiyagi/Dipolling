@@ -2,6 +2,7 @@
 require '../core/server.php'; 
 // Cek Session
 session_start();
+ob_start();
 if (!isset($_SESSION['login'])) {
     header("Location: ../login");
 }
@@ -44,6 +45,9 @@ $setting = $show_polling->singleFetch($query_settings);
                 break;
             case '/poll-active.php':
                 echo 'Set Active Poll';
+                break;
+            case '/report.php':
+                echo 'Report Bug';
                 break;
             default:
                 header("Location: dashboard");
@@ -97,6 +101,12 @@ $setting = $show_polling->singleFetch($query_settings);
             <li>
                 <a href="settings" class="text-dark">
                     <i class="bi bi-gear"></i> Settings</a>
+            </li>
+            <li>
+                <a href="report" class="text-dark">
+                    <i class="bi bi-bug"></i>
+                    Report
+                </a>
             </li>
         </ul>
     </nav>

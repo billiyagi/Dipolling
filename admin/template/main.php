@@ -9,5 +9,6 @@
 
 <!-- Jquery Javascript -->
 <script src="../assets/js/jquery-3.4.1.slim.min.js"></script>
+<?php ob_flush(); ?>
 </body>
 </html>

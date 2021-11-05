@@ -1,6 +1,7 @@
 <?php
+ob_start();
 require 'core/server.php';
-if (isset($db_error)) {
+if ($db_error) {
     header("Location: instalation");
 }
 // ambil nama tabel yang kolom polling_active nya = 1
@@ -45,7 +46,7 @@ $result_self_page = end($self_page);
     <!-- Internal CSS -->
     <link rel="stylesheet" href="assets/css/dipolling.css">
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,7 +64,7 @@ $result_self_page = end($self_page);
         <?php else: ?>
             <header class="d-flex justify-content-between align-items-center pt-5 pb-5">
         <?php endif ?>
-            <a href="<?= $result_self_page; ?>" class="dip-brand text-decoration-none fs-2 text-secondary">
+            <a href="#" class="dip-brand text-decoration-none fs-2 text-secondary">
                 <img src="assets/img/<?= $setting['site_icon']; ?>" alt="<?= $setting['site_name']; ?>" width="100px">
             </a>
             <?php if ($setting['site_hide_login'] > 0): ?>
@@ -101,9 +102,9 @@ $result_self_page = end($self_page);
                         <h2 class="text-center mt-5">Welcome to Dipolling!</h2>
                         <p class="text-center text-secondary">This main page to show your polling!</p>
                     <?php elseif(isset($vote_success)): ?>
-                        <div class="text-center">
-                            <img src="assets/img/mg/Balloons.gif" alt="">
-                            <h2>Thank you for participating</h2>
+                        <div class="text-center dip-thank-you">
+                            <img src="assets/img/mg/Balloons.gif">
+                            <h2>Thank you <br>for participating</h2>
                         </div>
                     <?php else: ?>
                         <?php $i = 1; ?>
@@ -142,21 +143,15 @@ $result_self_page = end($self_page);
     </div>
 </div>
 
-
-
-
 <!-- Internal Javascript -->
 <script src="assets/js/dipolling.js"></script>
 
+<!-- JS Bootstrap -->
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
+
+<!-- JS Jquery -->
 <script src="assets/js/jquery-3.4.1.slim.min.js"></script>
-
-<!-- Bootstrap Javascript Separate -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script> -->
-
-<!-- Bootstrap Javascript Bundle -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script> -->
+<?php ob_flush(); ?>
 </body>
 </html>
