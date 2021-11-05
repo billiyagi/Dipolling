@@ -1,8 +1,21 @@
-# Dipolling
-Buat pilihan dengan mudah
+# Dipolling - Buat Pemilihan dengan mudah
 <br>
 <br>
 
+## Tentang
+Aplikasi Polling Sederhana dengan tampilan dan manajemen tabel polling yang mudah digunakan oleh pengguna
+
+## Fitur
+Dipolling juga mempunyai beberapa fitur
+<br>
+Berikut Fitur tsb:
+
+<ul>
+  <li>Instalasi yang mudah</li>
+  <li>Manajemen tabel yang mudah</li>
+  <li>Statistik di dashboard dari Chart.Js</li>
+  <li>Kostumisasi Nama & Ikon Website</li>
+</ul>
 
 ## License
 Under MIT License
