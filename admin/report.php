@@ -18,7 +18,7 @@
 <small>
 <span class="mt-5 d-block text-secondary">&copy;<?php echo date('Y'); ?> Dipolling - (Under MIT License) 
 By Febry Billiyagi a.k.a gobillyx</span>
-<span class="text-secondary d-block mt-1">Follow me on instagram <a href="https://instagram.com/gobillyx72" class="text-decoration-none">@gobillyx72</a></span>
+<span class="text-secondary d-block mt-1">Follow me on instagram <a href="https://instagram.com/gobillyx" class="text-decoration-none">@gobillyx72</a></span>
 </small>
 
 <?php require 'template/main.php' ?>
