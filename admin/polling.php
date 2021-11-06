@@ -107,7 +107,7 @@ if (isset($_GET['activate'])) {
           </div>
           <div class="modal-body">
             <form class="" action="" method="post">
-                <label for="tabel-name" class="mb-3">Nama Tabel</label>
+                <label for="tabel-name" class="mb-3">Polling table</label>
                 <input type="text" id="tabel-name" name="tablename" placeholder="Enter Table name" class="form-control mb-4">
               </div>
               <div class="modal-footer">
@@ -128,7 +128,7 @@ if (isset($_GET['activate'])) {
         <table class="table mt-5">
             <tr class="table-dark">
                 <th>No</th>
-                <th>Polling Name</th>
+                <th>Polling Table</th>
                 <th>Total Vote</th>
                 <th class="text-center">Status</th>
             </tr>
@@ -143,7 +143,7 @@ if (isset($_GET['activate'])) {
                 ?>
 
             <tr>
-                <td><?php echo $i; ?></td>
+                <th><?php echo $i; ?></th>
                 <td>
                     <a href="poll.php?name=<?php echo $row['name']; ?>&add=0" class="text-decoration-none text-capitalize text-dark dip-see-polling"><?php echo str_replace("_", " ", $row['name']); ?>
                         <i class="bi bi-box-arrow-in-up-right text-primary"></i>

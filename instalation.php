@@ -18,8 +18,16 @@
 			</div>
 			<div class="card p-5 w-100">
 			<?php if (isset($_GET['part'])): ?>
-				
-				<?php if ($_GET['part'] === 'database'): ?>
+
+				<?php
+				// Cek apakah instalasi sudah dilakukan atau belum
+				require 'core/server.php';
+				if($db_error === false): ?>
+
+				<!-- redirect ke home -->
+
+				<?php header("Location: index"); ?>
+				<?php elseif ($_GET['part'] === 'database'): ?>
 					<?php
 						if (isset($_POST['submit_database'])) {
 							$host = $_POST['host_name'];
@@ -54,9 +62,6 @@ $"."db_name = '$database_name';
 							mysqli_query($conn, $query_dipolling_settings);
 
 							header("Location: instalation?part=account");
-							echo '
-    <script>window.location.href = "instalation?part=account"</script>
-    ';
 						}
 					?>
 
@@ -168,20 +173,20 @@ $"."db_name = '$database_name';
 						<!-- Submit Settings -->
 						<button type="submit" name="submit_settings" class="btn btn-primary w-100 mt-3">Install</button>
 					</form>
-					<?php endif ?>
+					<?php endif; ?>
+
 				<?php endif; ?>
-			<?php 
-			require 'core/server.php';
-			elseif($db_error === false): ?>
-				<?php header("Location: index"); ?>
+
 			<?php else: ?>
 				<?php header("Location: instalation?part=database"); ?>
-			<?php endif ?>
+			<?php endif; ?>
 			</div>
 		</div>
 	</div>
+
 <!-- Internal Javascript -->
 <script src="../assets/js/dipolling.js"></script>
+
 <?php ob_flush(); ?>
 </body>
 </html>
