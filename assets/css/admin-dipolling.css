@@ -1,4 +1,7 @@
 /* Utilities */
+body{
+    font-family: Poppins, sans-serif;
+}
 .dip-empty-polling{
     width: 100%;
     text-align: center;
@@ -278,3 +281,12 @@ main .row{
     font-family: MatSaleh;
     src: url(../fonts/MatSaleh.woff);
 }
+@font-face{
+    font-family: Poppins;
+    src: url(../fonts/Poppins-Regular.woff);
+}
+@font-face{
+    font-family: PoppinsSemiBold;
+    src: url(../fonts/Poppins-SemiBold.woff);
+}
+
