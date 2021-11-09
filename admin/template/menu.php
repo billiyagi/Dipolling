@@ -72,8 +72,11 @@ $setting = $show_polling->singleFetch($query_settings);
     
     <!-- This is Copyright Under MIT License (c) 
     DO NOT REMOVE IT -->
-    <div class="dip-brand text-secondary">
+    <div class="text-secondary position-relative">
+    <div class="dip-brand">
         Dipolling
+    </div>
+    <small class="d-block text-secondary dip-version">version 1.2</small>
     </div>
     <!-- This is Copyright Under MIT License (c) 
     DO NOT REMOVE IT -->
@@ -105,10 +108,10 @@ $setting = $show_polling->singleFetch($query_settings);
             </li>
         </ul>
     </nav>
-    <div class="dip-mode" id="displayModeBtn">
+    <div class="dip-logout" id="displayModeBtn">
         <!-- Button trigger modal -->
         <button type="button" class="bg-dark text-light" data-bs-toggle="modal" data-bs-target="#Logout">
-            <i class="bi bi-power fs-5"></i>
+            <span class="bi bi-power fs-5"></span>
         </button>
     </div>
     <button type="button" id="menuAdminBtn">
@@ -121,17 +124,13 @@ $setting = $show_polling->singleFetch($query_settings);
 <div class="modal fade" id="Logout" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Logout</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
         <div class="modal-body">
-            <p class="text-center mt-5 mb-5 fw-bold">Apakah Kamu yakin ingin keluar?</p>
-        </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="logout.php" class="btn btn-primary"><i class="bi bi-power"></i> Logout</a>
+            <p class="text-center mt-5 mb-5 fw-bold fs-3">You want to leave? <i class="bi bi-emoji-frown text-success"></i></p>
+            <div class="text-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <a href="logout" class="btn btn-primary">Yes</a>
             </div>
+        </div>
         </div>
     </div>
 </div>  

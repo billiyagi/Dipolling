@@ -1,4 +1,9 @@
 /* Utilities */
+.dip-version{
+    text-align: right;
+    font-style: italic;
+    transform: translate(-14%, -200%);
+}
 body{
     font-family: Poppins, sans-serif;
 }
@@ -131,20 +136,30 @@ header li a:hover{
     padding-left: 1.5rem;
 }
 /* Night mode */
-.dip-mode{
+.dip-logout{
     position: absolute;
     left: 0;
     bottom: 0;
     margin: 1rem;
 }
-.dip-mode button{
+.dip-logout button{
     background-color: #FFF;
     border: 1px solid #ddd;
-    border-radius: 100%;
+    border-radius: 20px;
     padding: .3rem;
 }
-.dip-mode button i{
+.dip-logout button span{
     padding: .3rem;
+    position: relative;
+}
+.dip-logout button span::after{
+    content: '';
+    font-size: 1rem;
+    line-height: 1;
+}
+.dip-logout button span:hover::after{
+    transition: .3s;
+    content: ' Log out';
 }
 /* Admin Content */
 .dib-admin-page-title{
@@ -201,6 +216,11 @@ main .row{
 }
 /* Tablet/Ipad Device */
 @media screen and (max-width: 960px){
+    .dip-version{
+        text-align: right;
+        font-style: italic;
+        transform: translate(-25%, -200%);
+    }
     /* menu showing */
     .dip-menu-show{
         transition: .3s;
@@ -256,6 +276,11 @@ main .row{
 }
 /* Mobile Device */
 @media screen and (max-width: 600px){
+    .dip-version{
+        text-align: right;
+        font-style: italic;
+        transform: translate(-25%, -200%);
+    }
     header{
         position: fixed;
         width: 70%;

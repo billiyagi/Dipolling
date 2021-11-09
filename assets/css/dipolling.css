@@ -26,10 +26,12 @@
 .dip-wd{
     width: 1024px;
 }
+.dip-mt-6{
+    margin-top: 6rem;
+}
 .dip-mt-8{
     margin-top: 8rem;
 }
-
 body{
     font-family: 'Poppins', sans-serif !important;
     overflow-x: hidden;
