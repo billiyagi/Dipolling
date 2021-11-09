@@ -1,10 +1,20 @@
-<?php ob_start(); ?>
+<?php
+// set session
+session_start();
+ob_start(); 
+if (is_null($_SESSION['instalation'])) {
+	header("Location: index");
+}elseif($_GET['step'] !== $_SESSION['instalation']){
+	header("Location: index");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Dipolling Instalation</title>
+	<title>Dipolling Instalation (<?php echo $_SESSION['instalation']; ?>)</title>
 	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
 	<link rel="stylesheet" href="assets/css/dipolling.css">
 	<link rel="icon" href="assets/img/mg/dipolling.ico">
@@ -17,17 +27,12 @@
 				Dipolling
 			</div>
 			<div class="card p-5 w-100">
-			<?php if (isset($_GET['part'])): ?>
-
+			<!-- (kondisi pertama) -->
+			<?php if (isset($_GET['step'])): ?>
+				<!-- start Step (kondisi kedua)-->
 				<?php
-				// Cek apakah instalasi sudah dilakukan atau belum
-				require 'core/server.php';
-				if($db_error === false): ?>
-
-				<!-- redirect ke home -->
-
-				<?php header("Location: index"); ?>
-				<?php elseif ($_GET['part'] === 'database'): ?>
+				//cek session dan get step database
+				if ($_SESSION['instalation'] === 'database' && $_GET['step'] === 'database'): ?>
 					<?php
 						if (isset($_POST['submit_database'])) {
 							$host = $_POST['host_name'];
@@ -43,7 +48,7 @@ $"."db_name = '$database_name';
 ?>";
 							fwrite($myfile, $txt);
 							fclose($myfile);
-							require 'core/config.php';
+							require 'core/server.php';
 							$conn = mysqli_connect($db_host_name, $db_username, $db_password, $db_name);
 
 							// Buat tabel: list_table
@@ -58,13 +63,12 @@ $"."db_name = '$database_name';
 
 							// Buat tabel: dipolling_settings
 							$query_dipolling_settings = 'CREATE TABLE dipolling_settings (settings_profile VARCHAR(255) PRIMARY KEY, site_name VARCHAR(255), site_icon VARCHAR(255), site_smtp VARCHAR(255), site_poll_icon VARCHAR(355), site_hide_login INT(5), site_maintenance INT(5))';
-
+							session_start();
 							mysqli_query($conn, $query_dipolling_settings);
-
-							header("Location: instalation?part=account");
+							$_SESSION['instalation'] = 'account';
+							header("Location: instalation?step=account");
 						}
 					?>
-
 					<!-- Database Account -->
 					<h2 class="text-center">Welcome!</h2>
 					<p class="text-secondary mb-5 text-center">This is Dipolling instalation</p>
@@ -82,21 +86,25 @@ $"."db_name = '$database_name';
 						<label for="#databaseAccount" class="control-label">Database Account</label>
 						<div class="input-group" id="databaseAccount">
 							<input type="text" name="database_username" class="form-control mb-3" placeholder="Database Username" required>
-							<input type="text" name="database_password" class="form-control mb-3" placeholder="Database Password">
+							<input type="password" name="database_password" class="form-control mb-3" placeholder="Database Password">
 						</div>
 						<small class="text-center text-secondary d-block">Jika menggunakan xampp default password <br>adalah kosong (kolom password tidak perlu di isi)</small>
 
 						<!-- Submit Database -->
-						<button type="submit" name="submit_database" class="btn btn-primary w-100 mt-4">Next</button>
+						<button type="submit" name="submit_database" class="btn btn-primary w-100 mt-4">Connect Database</button>
 					</form>
-				<?php elseif($_GET['part'] === 'account'): ?>
+				<?php
+				//cek session dan get step account
+				elseif( $_SESSION['instalation'] === 'account' && $_GET['step'] === 'account'): ?>
 					<?php if(isset($_POST['submit_account'])){
 							require 'core/server.php';
-						if (is_null($dipolling->addUserInstall($_POST))) {
-							header("Location: instalation?part=settings");
-						}else{
-							echo $notify->showNotify(false, "Tambah akun gagal");
-						}
+							if (is_null($dipolling->addUserInstall($_POST))) {
+								session_start();
+								$_SESSION['instalation'] = 'settings';
+								header("Location: instalation?step=settings");
+							}else{
+								echo $notify->showNotify(false, "Tambah akun gagal");
+							}
 					} ?>
 
 					<!-- Account -->
@@ -116,13 +124,15 @@ $"."db_name = '$database_name';
 						<label for="#basic_account" class="control-label mb-2">Username & Password</label>
 						<div class="input-group" id="basic_account">
 							<input type="text" name="username_account" class="form-control mb-3" placeholder=" Username">
-							<input type="text" name="password_account" class="form-control mb-3" placeholder="Password">
+							<input type="password" name="password_account" class="form-control mb-3" placeholder="Password">
 						</div>
 
 						<!-- Submit Account -->
-						<button type="submit" name="submit_account" class="btn btn-primary w-100">Next</button>
+						<button type="submit" name="submit_account" class="btn btn-primary w-100">Create Account</button>
 					</form>
-				<?php elseif($_GET['part'] === 'settings'): ?>
+				<?php
+				//cek session dan get step account
+				elseif( $_SESSION['instalation'] === 'settings' && $_GET['step'] === 'settings'): ?>
 					<?php if(isset($_POST['submit_settings'])){
 						require 'core/server.php';
 						$dipMediaFotoExtension = ['jpg', 'png', 'jpeg'];
@@ -142,7 +152,7 @@ $"."db_name = '$database_name';
 						<i class="bi bi-check-circle fw-bold fs-1 text-success"></i>
 						<span class="fs-4 fw-bold d-block mt-2">Instalation Successful!</span>
 						<small class="text-secondary mb-4 d-block">
-							Thank you for using this software
+							Thank you for using Dipolling
 						</small>
 						<a href="login" class="btn btn-primary w-100">Let's Make Some Polling</a>
 					</div>
@@ -174,11 +184,30 @@ $"."db_name = '$database_name';
 						<button type="submit" name="submit_settings" class="btn btn-primary w-100 mt-3">Install</button>
 					</form>
 					<?php endif; ?>
+				<?php
+				// Ketika semua kondisi false maka diasumsikan koneksi database error
+				elseif($_SESSION['instalation'] == 'error' && $_GET['step'] == 'error'): ?>
+					<h3 class="fw-bold">Error Database Connection</h3>
+					<p class="text-secondary">Please check your database configuration</p>
+					<?php 
+			        $_SESSION = [];
+			        session_unset();
+			        session_destroy();
+					?>
+				<!-- End step (kondisi kedua)-->
+				<?php endif; ?>
 
+			<?php
+			// cek kondisi (kondisi pertama) get step apakah terdaftar atau tidak
+			elseif($_GET['step'] !== 'database' || $_GET['step'] !== 'account' || $_GET['step'] !== 'settings' || $_GET['step'] !== 'error'): ?>
+				<?php if (isset($_SESSION['instalation'])): ?>
+					<?php header("Location: instalation?step=" . $_SESSION['instalation']); ?>
+				<?php else: ?>
+					<?php header("Location: index"); ?>
 				<?php endif; ?>
 
 			<?php else: ?>
-				<?php header("Location: instalation?part=database"); ?>
+				<?php header("Location: index"); ?>
 			<?php endif; ?>
 			</div>
 		</div>

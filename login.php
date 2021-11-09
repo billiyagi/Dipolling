@@ -5,8 +5,7 @@ require 'core/server.php';
 session_start();
 ob_start();
 if (isset($_SESSION['login'])) {
-    header("Location: admin/dashboard.php");
-    
+    header("Location: admin/dashboard");
 }
 
 if (isset($_POST['submit'])) {
@@ -17,8 +16,8 @@ if (isset($_POST['submit'])) {
         $_SESSION['login'] = true;
         $_SESSION['username'] = htmlspecialchars($_POST['username']);
 
-        // // Redirect
-        header("Location: admin/dashboard.php");
+        //Redirect
+        header("Location: admin/dashboard");
         
     }elseif($result_login === 'username'){
 
@@ -60,7 +59,7 @@ if (isset($_POST['submit'])) {
 </div>
 
 <!-- Back button -->
-<div class="dip-back-page pt-3 ps-3">
+<div class="dip-back-page pt-3 ps-3 mb-5">
     <a href="index.php" class="text-decoration-none text-secondary fs-6">
         <i class="bi bi-arrow-left"></i> Kembali
     </a>

@@ -1,9 +1,6 @@
 <?php
 ob_start();
 require 'core/server.php';
-if ($db_error) {
-    header("Location: instalation");
-}
 // ambil nama tabel yang kolom polling_active nya = 1
 $result = $show_polling->get_Query('SELECT * FROM list_table WHERE polling_active=1');
 $name_active_polling = $show_polling->singleFetch($result);
@@ -24,10 +21,11 @@ if (isset($_POST['submit'])) {
     $get_poll_id = $_POST['poll'];
     // Menambahkan +1 ke dalam data row tabel yang dipilih
     $dipolling->VotePoll($name_active_polling_s, $get_poll_id);
-
-    $vote_success = true;
+    $en_active_polling_s = base64_encode($name_active_polling_s);
+    // Cookie 1 hari
+    setcookie('poll', $en_active_polling_s, time()+60*60*24);
+    header("Location: index");
 }
-
 
 // Init Settings
 $query_settings = $show_polling->get_Query("SELECT * FROM dipolling_settings");
@@ -35,9 +33,13 @@ $setting = $show_polling->singleFetch($query_settings);
 
 $self_page = explode('/', $_SERVER['PHP_SELF']);
 $result_self_page = end($self_page);
+
+if (is_null($setting)) {
+    header("Location: instalation");
+}
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -83,9 +85,9 @@ $result_self_page = end($self_page);
             </div>
         <?php else: ?>
             <!-- Container polling -->
-            <div class="dip-container-pol dip-mt-8">
+            <div class="dip-container-pol dip-mt-6">
                 <div class="dip-title-pol text-center">
-                <?php if(!isset($vote_success)): ?>
+                <?php if(!isset($_COOKIE['poll'])): ?>
                     <?php if (isset($name_active_polling_s)): ?>
                         <h3 class="text-capitalize fw-bold">
                             <?php echo str_replace('_', ' ', $name_active_polling_s); ?>
@@ -101,7 +103,7 @@ $result_self_page = end($self_page);
                         <img src="assets/img/mg/undraw_well_done_i2wr.svg" class="dip-welcome-polling">
                         <h2 class="text-center mt-5">Welcome to Dipolling!</h2>
                         <p class="text-center text-secondary">This main page to show your polling!</p>
-                    <?php elseif(isset($vote_success)): ?>
+                    <?php elseif(isset($_COOKIE['poll'])): ?>
                         <div class="text-center dip-thank-you">
                             <img src="assets/img/mg/Balloons.gif">
                             <h2>Thank you <br>for participating</h2>
