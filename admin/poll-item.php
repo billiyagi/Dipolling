@@ -1,4 +1,5 @@
-<?php require "template/menu.php";
+<?php
+require "template/menu.php";
     $conf = $_GET['conf'];
     $table_name = $_GET['table_name'];
 

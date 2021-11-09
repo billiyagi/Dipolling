@@ -1,4 +1,5 @@
 <?php
+require "template/menu.php";
 require '../core/server.php';
 $get_change_status_poll = $_GET['stat'];
 echo $get_change_status_poll;

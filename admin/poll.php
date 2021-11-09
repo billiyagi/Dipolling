@@ -1,4 +1,5 @@
-<?php require "template/menu.php";
+<?php
+require "template/menu.php";
 
 // Get Table Name
 $get_table_name = $_GET['name'];

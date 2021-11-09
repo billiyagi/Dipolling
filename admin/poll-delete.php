@@ -1,4 +1,5 @@
 <?php
+require "template/menu.php";
 require '../core/server.php';
 
 $table_name = $_GET['name'];
