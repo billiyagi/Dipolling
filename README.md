@@ -1,5 +1,6 @@
 # Dipolling - Buat Pemilihan dengan mudah
 
+<img src="http://gobillyx.000webhostapp.com/dipolling/assets/img/dashboard%20-%20chart.JPG">
 <br>
 
 ### Tentang
