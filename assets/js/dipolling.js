@@ -3,15 +3,6 @@ function btnSubmit(){
     submitVote.classList.add('d-block');
 }
 
-var displayModeBtn = document.getElementById('displayModeBtn');
-
-var allBody = document.getElementsByClassName("bg-light");
-
-displayModeBtn.addEventListener('click', function(){
-    allBody.classList.toggle('bg-dark');
-})
-
-
 menuAdminBtn.addEventListener('click', function(){
     theBody.classList.toggle('bg-shadow');
     menuAdmin.classList.toggle('dip-menu-show');
@@ -33,4 +24,9 @@ document.onclick = function(e){
 }
 function closeNotif(){
     document.getElementById('notif').classList.remove('dip-notif-show');
+}
+
+const theLoader = document.getElementById('dip-loader');
+function FormLoading(){
+     theLoader.classList.replace('d-none', 'd-flex');
 }
