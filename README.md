@@ -1,12 +1,12 @@
-# Dipolling - Buat Pemilihan dengan mudah
+# Dipolling - Make Choices Easily
 
 <img src="http://gobillyx.000webhostapp.com/dipolling/assets/img/dashboard%20-%20chart.JPG">
 <br>
 
-### Tentang
+### About
 Polling is a website-based application that functions to create a poll/voting with a display that focuses on convenience when choosing votes/votes and a complete and free admin dashboard.
 
-### Fitur
+### Features
 The following features are:
 
 <ul>
