@@ -1,4 +1,29 @@
 /* dip = dipoling */
+.full-screen-img button{
+     background-color: rgba(0, 0, 0, 0.5);
+     opacity: 0;
+     border: 0;
+}
+.full-screen-img button:hover{
+     opacity: 1;
+     transition: .4s;
+}
+.full-screen-img i{
+     font-size: 10.5rem;
+}
+.dip-not-found img{
+     width: 400px;
+}
+.dip-none{
+     display: none;
+}
+.dip-survey{
+     width: 80%;
+     margin: auto;
+}
+.dip-survey textarea{
+     height: 100%;
+}
 /* Utilities */
 .dip-maintenance{
     margin-top: 5rem;
@@ -64,6 +89,10 @@ body{
     position: relative;
     height: 100%;
 }
+.dip-card img{
+     border-top-right-radius: 5px;
+     border-top-left-radius: 5px;
+}
 .dip-card .dip-cover-img{
     height: 350px;
     object-fit: cover;
@@ -104,15 +133,23 @@ body{
 form #submitVote{
     display: none;
 }
+
 /* Footer */
 footer{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 50vh;
+    height: 40vh;
 }
 /* Ipad/Tablet Device */
 @media screen and (max-width: 900px){
+     .dip-not-found img{
+          width: 80%;
+     }
+     .dip-survey{
+          width: 90%;
+          margin: auto;
+     }
     .dip-maintenance{
         display: block;
         width: 100%;
@@ -129,6 +166,16 @@ footer{
 }
 /* Mobile Device */
 @media screen and (max-width: 600px){
+     .full-screen-img i{
+          font-size: 6.5rem;
+     }
+     .dip-not-found img{
+          width: 100%;
+     }
+     .dip-survey{
+          width: auto;
+          margin: auto;
+     }
     .dip-thank-you img{
         width: 100%;
     }

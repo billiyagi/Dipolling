@@ -1,4 +1,49 @@
 /* Utilities */
+.survey-answer-show button{
+     opacity: 0;
+}
+.survey-answer-show:hover button{
+     opacity: 1;
+     transition: .3s;
+}
+.renameTable{
+     display: none;
+     position: absolute;
+     top: 33px;
+     z-index: 99;
+     background-color: #FFF;
+     padding: 1rem;
+}
+.dip-edit-table-name{
+     color: #FFF;
+     font-size: 16px;
+     cursor: pointer;
+     border-radius: 100%;
+}
+.dip-edit-table-name::after{
+     display: none;
+}
+.dip-edit-table-name:hover::after{
+     content: 'rename';
+     display: inline-block;
+}
+.dip-edit-table-name:hover{
+     border-radius: 10px;
+}
+#showMail td a{
+     opacity: 0;
+}
+#showMail td:hover a{
+     opacity: 1;
+     transition: .3s;
+}
+.add-mail{
+     display: none;
+}
+.dip-table-smtp{
+     height: 150px;
+     overflow: auto;
+}
 .dip-version{
     text-align: right;
     font-style: italic;
@@ -62,10 +107,10 @@ body{
 .table tr{
     white-space: nowrap !important;
 }
-.dip-see-polling i{
+.dip-see i{
     opacity: 0;
 }
-.dip-see-polling:hover i{
+.dip-see:hover i{
     transition: .3s;
     opacity: 1;
 }
@@ -214,6 +259,23 @@ main .row{
 #menuAdminBtn{
     display: none !important;
 }
+/* Loading */
+#dip-loader{
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0,0,0,.5);
+     z-index: 99999999999999;
+     justify-content: center;
+     align-items: center;
+}
+#dip-loader .box-dip-loader{
+     background-color: #FFF;
+     border-radius: 8px;
+     padding: 3rem;
+}
 /* Tablet/Ipad Device */
 @media screen and (max-width: 960px){
     .dip-version{
@@ -271,7 +333,7 @@ main .row{
         width: 100%;
         height: 100%;
         background-color: rgba(0,0,0,.6);
-        z-index: 9;
+        z-index: 999;
     }
 }
 /* Mobile Device */
@@ -314,4 +376,3 @@ main .row{
     font-family: PoppinsSemiBold;
     src: url(../fonts/Poppins-SemiBold.woff);
 }
-
