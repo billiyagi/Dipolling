@@ -4,18 +4,18 @@
 <br>
 
 ### Tentang
-Aplikasi Polling Sederhana dengan tampilan dan manajemen tabel polling yang mudah digunakan oleh pengguna
+Polling is a website-based application that functions to create a poll/voting with a display that focuses on convenience when choosing votes/votes and a complete and free admin dashboard.
 
 ### Fitur
-Dipolling juga mempunyai beberapa fitur
-<br>
-Berikut Fitur tsb:
+The following features are:
 
 <ul>
-  <li>Instalasi yang mudah</li>
-  <li>Manajemen tabel yang mudah</li>
-  <li>Statistik di dashboard dari Chart.Js</li>
-  <li>Kostumisasi Nama & Ikon Website</li>
+  <li>Easy installation</li>
+  <li>Easy table management</li>
+  <li>Dashboard statistics from Chart.Js</li>
+  <li>Website Name & Icon Customization</li>
+  <li>Forgot Password</li>
+  <li>Survey</li>
 </ul>
 
 ### License
