@@ -1,8 +1,7 @@
-<IfModule mod_rewrite.c>
+Options -Multiviews
+
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.*)$ $1.php
-</IfModule>
-
-Options -Indexes
+RewriteRule ^survey/(.*)$ index.php?survey=$1 [L]
