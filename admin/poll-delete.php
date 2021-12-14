@@ -1,21 +1,27 @@
 <?php
 require "template/menu.php";
-require '../core/server.php';
 
-$table_name = $_GET['name'];
-$query = "DROP TABLE " . $table_name;
+$tableName = $_GET['name'];
 
-$query_item = "SELECT * FROM $table_name";
+// Fetch isi tabel
+$rowsItem = $showPolling->GetLoopFetch( "SELECT * FROM $tableName" );
 
-$result_item = $show_polling->get_Query($query_item);
-$rows_item = $show_polling->loopFetch($result_item);
-
-foreach ($rows_item as $row) {
-    unlink('../assets/img/pollimg/' . $row['polimg']);
+// Hapus satu persatu gambar
+if ( !empty( $rowsItem ) ) {
+     foreach ( $rowsItem as $row ) {
+         unlink( '../assets/img/pollimg/' . $row['polimg'] );
+     }
 }
 
-if ($ex = $show_polling->dropTable($query) > 0) {
-    $query2 = "DELETE FROM list_table WHERE name='$table_name'";
-    $show_polling->deleteFetch($query2);
-    header("Location: polling?table_name=$table_name&table_delete=1");
+// Hapus tabel
+mysqli_query( DB::$conn, "DROP TABLE " . $tableName );
+
+// Hapus field tabel di dipolling_list_table
+mysqli_query( DB::$conn, "DELETE FROM dipolling_list_table WHERE name='$tableName'" );
+
+// redirect
+if ( mysqli_affected_rows( DB::$conn ) == 1 ) {
+     header( "Location: polling?table_name=$tableName&table_delete=1" );
+}else{
+     header( "Location: polling?table_name=$tableName&table_delete=0" );
 }

@@ -1,92 +1,116 @@
 <?php
 include "template/menu.php";
 
-
-
 // cek tabel polling aktif
-$check_active_polling = $show_polling->get_Query("SELECT * FROM list_table WHERE polling_active=1");
-if (mysqli_num_rows($check_active_polling) != 0) {
-    $name_active_polling = $show_polling->singleFetch($check_active_polling);
-    $name_active_polling_s = $name_active_polling['name'];
-}else{
-    $name_active_polling_s = '-';
-}
+if ( mysqli_num_rows(  mysqli_query( DB::$conn, "SELECT * FROM dipolling_list_table WHERE polling_active=1" ) ) != 0 ) {
+     // Fetch dan pilih polling mana yang aktif saat ini
+     $activePolling = $showPolling->GetSingleFetch( "SELECT * FROM dipolling_list_table WHERE polling_active=1" );
 
-// tampilkan Settings 
-$show_settings_sql = "SELECT * FROM dipolling_settings";
-$result_settings_sql = $show_polling->get_Query($show_settings_sql);
-$settings = $show_polling->singleFetch($result_settings_sql);
+     // Ambil nama dari row polling aktif
+     $nameActivePolling = $activePolling['name'];
+
+} else {
+     // Jika polling tidak ada yang aktif
+     $nameActivePolling = '-';
+}
 
 // Update gambar select Poll
-if (isset($_POST['poll_img_submit'])) {
+if ( isset( $_REQUEST['poll_img_submit'] ) ) {
 
-    // init class addMedia
-    $dipMediaFotoExtension = ['jpg', 'png', 'jpeg'];
-    $dipMedia = new dipollingMedia($_FILES, '../assets/img/', $dipMediaFotoExtension, 1000000);
+     // init class addMedia
+     $mediaFile = new MediaFiles( $_FILES, ['../assets/img/', 'jpg', 'png', 'jpeg'], 1000000, 'polselectimg');
 
-    //upload gambar
-    if ($_FILES['polimg']['name']) {
-        unlink('../assets/img/' .  $_POST['old_icon']);
-        
-        $site_icon = $dipMedia->addMedia('img');
-    }else{
-        $site_icon = $_POST['old_icon'];
-    }
-    $dipolling->updateSelectPollImg($_POST, $site_icon);
-    header("Location: dashboard");
+     //upload gambar
+     if ( $_FILES['polselectimg']['name']) {
+
+          if (  $siteIcon = $mediaFile->SetAddMedia( 'img') ) {
+               // Hapus gambar lama
+              unlink( '../assets/img/' .  $_REQUEST['old_icon']);
+
+          } else {
+               // Gunakan gambar lama
+              $siteIcon = $_REQUEST['old_icon'];
+          }
+
+     } else {
+          // Gunakan gambar lama
+          $siteIcon = $_REQUEST['old_icon'];
+     }
+
+     // Init settings
+     $NewSetting = new Settings( DB::$conn );
+
+     // Update gambar select
+     $NewSetting->SetUpdateSelectPollImg( $_REQUEST, $siteIcon );
+
+     // Cek perubahan dalam database
+     if ( mysqli_affected_rows( DB::$conn ) > 0 ) {
+          header( "Location: dashboard?spoll=1" );
+
+     } else {
+         header( "Location: dashboard?spoll=0" );
+     }
 }
 
+// Notifikasi Update gambar (Select Poll)
+if ( isset( $_GET['spoll'] ) ) {
 
+     if ( $_GET['spoll'] == 1 ) {
+          echo ShowNotify( true, 'Image successfully changed' );
 
-// Query & Init Show All Table Item
-$sql = "SELECT * FROM " . $name_active_polling_s;
-$show_polling = new dipollingTable($db_host_name, $db_username, $db_password, $db_name);
+     } elseif ( $_GET['spoll'] == 0 ) {
+          echo ShowNotify( false, 'Image failed to changed' );
+     }
+}
 
-// Result dari query Table Item
-$result = $show_polling->get_Query($sql);
+// Ganti tipe statistik
+if ( isset($_REQUEST['submit_chart'] ) ) {
+     setcookie( 'chart', $_REQUEST['chart'], time()+60*60*24*30 );
+     header( "Location: dashboard" );
+}
+
 ?>
     <div class="dib-admin-page-title fs-4 text-dark fw-bold">
         <i class="bi bi-speedometer2"></i> Dashboard
     </div>
     <div class="row d-flex justify-content-between">
-        <div class="dip-admin-box mt-4 text-dark col-sm-4">
+        <div class="dip-admin-box mt-4 text-dark col-lg-4">
             <p class="text-dark">Total table</p>
             <span>
-                <?php echo mysqli_num_rows($show_polling->get_Query("SELECT * FROM list_table"));?>
+                 <!-- Total tabel yang ada di dalam database -->
+                <?php echo mysqli_num_rows( mysqli_query( DB::$conn, "SELECT * FROM dipolling_list_table" ) );?>
             </span>
         </div>
-        <div class="dip-admin-box mt-4 text-dark col-sm-4">
+        <div class="dip-admin-box mt-4 text-dark col-lg-4">
             <p class="text-dark">Polling active <i class="bi bi-patch-check-fill text-success"></i></p>
-            <span class="text-capitalize"><?= str_replace('_', ' ', $name_active_polling_s); ?></span>
+            <span class="text-capitalize"><?= str_replace('_', ' ', $nameActivePolling); ?></span>
             <div class="dip-float-total-polling">
                     <strong class="fs-3 d-block">
                         <?php
-                    // Ambil total keseluruhan dari tabel polling target
-                    $name_source_query = "SELECT SUM(polvote) FROM " . $name_active_polling_s;
-                    // cek apakah $name_active_polling_s berisi string '-' atau nama tabel
-                    // jika berisi nama tabel, tampilkan nama tabel tersebut
-                        if ($name_active_polling_s !== "-") {
-                            $res = $show_polling->get_Query($name_source_query);
-                            // Show total polling
-                            $single = $show_polling->singleFetch($res);
-                            if($single == NULL){
-                                echo 0;
-                            }else {
-                                echo $single['SUM(polvote)'];
-                            }
+                              // Ambil total keseluruhan dari tabel polling target
+                              // cek apakah $activePolling berisi string '-' atau nama tabel
+                              // jika berisi nama tabel, tampilkan nama tabel tersebut
+                        if ( $nameActivePolling !== "-" ) {
+                              // Show total polling
+                              $single = $showPolling->GetSingleFetch( "SELECT SUM(polvote) FROM " . $nameActivePolling );
+                              if( $single == NULL ){
+                                   echo 0;
+                              } else {
+                                   echo $single['SUM(polvote)'];
+                              }
                         }
                     ?>
                     </strong>
             </div>
         </div>
-        <div class="dip-admin-box mt-4 text-dark col-sm-3">
+        <div class="dip-admin-box mt-4 text-dark col-lg-3">
             <p class="text-dark">Select Poll Image</p>
             <img src="../assets/img/<?= $setting['site_poll_icon']; ?>" alt="Poll Select Image" width="40px">
             <div class="dip-float-admin-box">
-                <form action="" method="post" enctype="multipart/form-data">
+                <form action="<?= PageSelf(); ?>" method="post" enctype="multipart/form-data" onsubmit="FormLoading()">
                     <div class="input-group">
                         <input type="hidden" name="old_icon" value="<?= $setting['site_poll_icon']; ?>">
-                        <input type="file" name="polimg" class="form-control" required>
+                        <input type="file" name="polselectimg" class="form-control" required>
                         <button type="submit" name="poll_img_submit" class="group-text btn btn-primary">
                             Upload
                         </button>
@@ -96,28 +120,42 @@ $result = $show_polling->get_Query($sql);
         </div>
     </div>
 
+
     <!-- Chart From - chart.js -->
-    <?php if($name_active_polling_s !== "-"): ?>
+     <div class="container-chart">
+    <?php if ( $nameActivePolling !== "-" ): ?>
         <div style="width: 100%;height: 100%" class="mt-5 text-capitalize">
-            <canvas id="dipChart"></canvas>
+          <?php if ( $_COOKIE['chart'] == 'bar' || $_COOKIE['chart'] == 'line' ) : ?>
+               <canvas id="dipChart" style="margin: 0"></canvas>
+          <?php else : ?>
+               <canvas id="dipChart" style="margin: auto"></canvas>
+          <?php endif; ?>
         </div>
     <script>
         var dipId = document.getElementById("dipChart").getContext('2d');
         var dipChart = new Chart(dipId, {
-            type: 'bar',
+            type: '<?php if(isset($_COOKIE['chart'])){
+                 echo $_COOKIE['chart'];
+            }else{
+                 echo 'bar';
+            } ?>',
             data: {
-                
+
                 labels: [
-                <?php if($name_active_polling_s !== '-'): ?>
-                <?php
-                $rows_list_table = $show_polling->loopFetch($result);
-                foreach ($rows_list_table as $row): ?>
-                    <?= '"' . $row['polname'] . '"'; ?>,
-                <?php endforeach; ?>]
+                <?php if( $nameActivePolling !== '-' ): ?>
+                         <?php
+                         // fetch semua item dengan key nama dari tabel yang aktif saat ini
+                         $activeTableItem = $showPolling->GetLoopFetch( "SELECT * FROM " . $nameActivePolling );
+                         foreach ( $activeTableItem as $row ):
+                         ?>
+                         <?= ' " ' . $row['polname'] . ' " '; ?>,
+                     <?php endforeach; ?>]
                 <?php endif; ?>,
                 datasets: [{
-                    label: <?= "'" . str_replace('_', ' ', $name_active_polling_s) . "'"; ?>,
-                    data: [<?php foreach($rows_list_table as $row): ?><?php echo $row['polvote']; ?>,<?php endforeach; ?>],
+                    label: <?= "'" . str_replace('_', ' ', $nameActivePolling) . "'"; // Nama Tabel ?>,
+                    data: [<?php foreach ( $activeTableItem as $row ) : ?>
+                         <?php echo $row['polvote']; ?>,
+                         <?php endforeach; ?>],
                     backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -148,6 +186,19 @@ $result = $show_polling->get_Query($sql);
             }
         });
     </script>
+   </div>
+     <form action="<?= PageSelf(); ?>" method="post" class="mt-5 text-center" onsubmit="FormLoading()">
+          <select class="" name="chart">
+               <option value="Select Chart" disabled selected>Chart type</option>
+               <option value="bar">Bar</option>
+               <option value="line">Line</option>
+               <option value="pie">Pie</option>
+               <option value="radar">Radar</option>
+               <option value="polarArea">Polar Area</option>
+               <option value="doughnut">Doughnut</option>
+          </select>
+          <button type="submit" class="border-0 bg-primary text-light" name="submit_chart">Submit</button>
+     </form>
     <?php else: ?>
     <div class="dip-empty-polling mt-5 mb-5">
         <img src="../assets/img/mg/undraw_no_data_re_kwbl.svg" alt="No data">

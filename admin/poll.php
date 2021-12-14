@@ -1,86 +1,185 @@
 <?php
 require "template/menu.php";
 
-// Get Table Name
-$get_table_name = $_GET['name'];
+// Show all Item Polling
+if ( isset($_GET['name']) ) {
 
-// Get add Status
-$get_add_table = $_GET['add'];
+     // Cek apakah ada nama tabel di database yang dikirim dari url
+     if ( mysqli_num_rows( mysqli_query( DB::$conn, "SELECT * FROM dipolling_list_table WHERE name='" . $_GET['name'] . "'" ) ) == 1 ) {
+          $rowsListTable = $showPolling->GetLoopFetch("SELECT * FROM " . $_GET['name']);
 
-// Query & Init Show All Table Item
-$sql = "SELECT * FROM " . $get_table_name;
-$show_polling = new dipollingTable($db_host_name, $db_username, $db_password, $db_name);
+     } else {
+          header('Location: polling.php');
+     }
 
-// Result dari query Table Item
-$result = $show_polling->get_Query($sql);
-
-// Kondisi jika Nama table kosong
-if(empty($get_table_name)){
-   header("Location: polling");
-
-// Kondisi jika Result dari show polling null/false
-}elseif(!$result){
-   header("Location: polling");
-
-// Kondisi jika fungsi tambah tabel berhasil
-}elseif($get_add_table > 0){
-    //Notifikasi error
-   echo $notify->showNotify(true, str_replace('_', ' ', $get_table_name ) . ' berhasil ditambahkan');
+} else {
+     header('Location: polling.php');
 }
-$rows_list_table = $show_polling->loopFetch($result);
+
 
 // Cek polling yang aktif
-$check_active_polling = $show_polling->get_Query("SELECT * FROM list_table WHERE polling_active=1");
-if (mysqli_num_rows($check_active_polling)) {
-    $name_active_polling = $show_polling->singleFetch($check_active_polling);
-    $name_active_polling_s = $name_active_polling['name'];
-}else{
-    $name_active_polling_s = 0;
+$resultActivePolling = mysqli_query(DB::$conn, "SELECT * FROM dipolling_list_table WHERE polling_active=1");
+
+if ( mysqli_num_rows($resultActivePolling) != 0 ) {
+     $activePolling = $showPolling->GetSingleFetch("SELECT * FROM dipolling_list_table WHERE polling_active=1");
+
+} else {
+     $activePolling['name'] = '-';
+}
+
+// Cek Polling yang aktif
+if ( $_GET['name'] != $activePolling['name'] ) {
+     $checkVotePoll = $showPolling->GetSingleFetch("SELECT SUM(polvote) FROM " . $_GET['name']);
+
+} elseif ( $activePolling['name'] !== '-' ) {
+     $checkVotePoll = $showPolling->GetSingleFetch("SELECT SUM(polvote) FROM " . $activePolling['name']);
+
+} else {
+     $checkVotePoll = false;
+}
+
+// Rename Table Name
+if (isset($_REQUEST['rename_table_submit'])) {
+
+     // Basic Filter
+     $newTable = strtolower(
+          strip_tags(
+               htmlspecialchars(
+                    str_replace( " ", "_", $_REQUEST['rename_table'] )
+               )
+          )
+     );
+
+     $oldTable =  $_GET['name'];
+
+     $sql = "RENAME TABLE `$db_name`.`$oldTable` TO `$db_name`.`$newTable`";
+
+     $sql2 = "UPDATE dipolling_list_table
+              SET name='$newTable' WHERE name='$oldTable'";
+
+     $resultUpdateListTable = mysqli_query(DB::$conn, $sql2);
+     $resultRenameTable = mysqli_query(DB::$conn, $sql);
+
+     header("Location: poll?name=" . $newTable . "&rename=1");
 }
 
 // Notifikasi item berhasil ditambahkan
-if (isset($_GET['add_item'])) {
-    if ($_GET['add_item'] == 'success') {
-        echo $notify->showNotify(true, 'Item berhasil ditambahkan');
-    }else{
-        echo $notify->showNotify(false, 'Item gagal ditambahkan');
+if ( isset( $_GET['add_item'] ) ) {
+
+     if ( $_GET['add_item'] == 'success' ) {
+        echo ShowNotify( true, 'Item successfully added' );
+
+     } else {
+        echo ShowNotify( false, 'Item failed to added' );
+     }
+
+} elseif ( isset( $_GET['delete_item'] ) ){
+
+    if ( $_GET['delete_item'] == 1 ) {
+        echo ShowNotify( true, 'Item successfully deleted' );
     }
-}elseif(isset($_GET['delete_item'])){
-    if ($_GET['delete_item'] == 1) {
-        echo $notify->showNotify(true, 'Item berhasil dihapus');
+
+} elseif ( isset( $_GET['edit_item'] ) ){
+
+    if ( $_GET['edit_item'] == 'success' ) {
+         echo ShowNotify( true,'Item successfully updated' );
+
+    } else{
+         echo ShowNotify( false,'Item failed to updated' );
     }
-}elseif(isset($_GET['edit_item'])){
-    echo $notify->showNotify(true,'Item berhasil di edit');
+} elseif ( isset( $_GET['rename'] ) ) {
+     if ($_GET['rename'] == '1') {
+          echo ShowNotify( true,'Table name changed' );
+     }
 }
 ?>
+<h2 class="mt-4 position-relative">
+     <span class="text-secondary">Polling: </span>
 
-<h2 class="mt-4"><span class="text-secondary">Polling: </span> <strong class="text-capitalize"><?php echo str_replace("_", " ", $get_table_name); ?></strong></h2>
+     <strong class="text-capitalize">
+          <?= str_replace( "_", " ", $_GET['name'] ); ?>
+          <span class="dip-edit-table-name bg-primary p-2 position-absolute" id="btnRenameTable">
+               <i class="bi bi-pencil"></i>
+          </span>
+     </strong>
+
+     <form action="<?= PageSelf(); ?>?name=<?= $_GET['name']; ?>" method="post" id="renameTable" class="mt-3 renameTable shadow" onsubmit="FormLoading()">
+          <input type="text" name="rename_table" placeholder="Rename table" value="<?= strtolower(str_replace( "_", " ", $_GET['name'] )); ?>" class="form-control">
+          <button type="submit" name="rename_table_submit" class="d-none">Submit</button>
+     </form>
+</h2>
 <div class="d-sm-flex justify-content-between">
-    <a href="poll-item?table_name=<?= $get_table_name; ?>&conf=add" class="btn btn-lg btn-primary mt-5">
-        <i class="bi bi-plus-lg"></i> Add Polling item
-    </a>
+     <div class="btn-group">
+
+          <a href="poll-item?table_name=<?= $_GET['name']; ?>&conf=add" class="btn btn-lg btn-primary mt-5">
+              <i class="bi bi-plus-circle"></i> Add item
+          </a>
+     <?php if( !$checkVotePoll || $checkVotePoll["SUM(polvote)"] == 0 ): ?>
+
+          <!-- Tombol Modal Hapus Tabel -->
+          <a class="btn btn-lg btn-secondary mt-5 text-light disabled"><i class="bi bi-warning"></i> Reset</a>
+     </div>
+
+     <?php else: ?>
+          <!-- Tombol Modal Hapus Tabel -->
+          <a class="btn btn-lg btn-secondary mt-5 text-light" data-bs-toggle="modal" data-bs-target="#modalResetTabel"><i class="bi bi-warning"></i> Reset</a>
+     </div>
+
+     <!-- Modal Hapus Tabel -->
+     <div class="modal fade" id="modalResetTabel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalHapusTabelLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content">
+                    <div class="modal-header bg-light">
+
+                         <h5 class="modal-title fw-bold text-capitalize" id="modalHapusTabelLabel"><span class="text-secondary">Reset table:</span> <?= str_replace('_', ' ', $_GET['name']); ?>?</h5>
+                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                         </div>
+
+                    <div class="modal-body">
+                         <span class="mt-3 mb-3 d-block">Dengan mengklik tombol reset kamu akan <strong>menghapus semua vote(suara)</strong> yang ada didalam tabel, apakah kamu yakin?</span>
+                    </div>
+
+                    <div class="modal-footer bg-light">
+                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">No</button>
+                         <a href="poll-reset?table_name=<?= $_GET['name']; ?>" class="btn btn-secondary">
+                         <i class="bi bi-x-circle"></i> Reset
+                         </a>
+                    </div>
+               </div>
+          </div>
+     </div>
+     <?php endif; ?>
+
+
 
     <!-- Ketika polling sudah aktif dan tombol untuk menonaktifkannya -->
-    <?php if($get_table_name === $name_active_polling_s): ?>
+    <?php if($_GET['name'] === $activePolling['name']): ?>
+
         <div class="btn-group">
-            <a href="poll-active?name=<?= $get_table_name; ?>&stat=nonactive" class="btn btn-lg btn-danger mt-5">
+
+            <a href="poll-active?name=<?= $_GET['name']; ?>&stat=nonactive" class="btn btn-lg btn-danger mt-5" onclick="FormLoading()">
                 <i class="bi bi-x-circle"></i> Non-Active
             </a>
-            <a href="poll-delete?name=<?= $get_table_name; ?>" class="btn btn-lg btn-secondary mt-5 disabled">
+
+            <a href="poll-delete?name=<?= $_GET['name']; ?>" class="btn btn-lg btn-secondary mt-5 disabled" onclick="FormLoading()">
                 <i class="bi bi-x-circle"></i> Delete
             </a>
+
         </div>
 
     <!-- Ketika polling belum ada yang aktif -->
-    <?php elseif($name_active_polling_s === 0): ?>
+<?php elseif($activePolling['name'] === '-'): ?>
 
 
         <div class="btn-group">
-            <a href="poll-active?name=<?= $get_table_name; ?>&stat=active" class="btn btn-lg btn-success mt-5">
+
+            <a href="poll-active?name=<?= $_GET['name']; ?>&stat=active" class="btn btn-lg btn-success mt-5" onclick="FormLoading()">
                 <i class="bi bi-check-circle"></i> Activate
             </a>
+
             <!-- Tombol Modal Hapus Tabel -->
             <a class="btn btn-lg btn-danger mt-5" data-bs-toggle="modal" data-bs-target="#modalHapusTabel"><i class="bi bi-x-circle"></i> Delete</a>
+
         </div>
 
         <!-- Modal Hapus Tabel -->
@@ -88,7 +187,7 @@ if (isset($_GET['add_item'])) {
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-light">
-                        <h5 class="modal-title fw-bold text-capitalize" id="modalHapusTabelLabel"><span class="text-secondary">Drop table:</span> <?= str_replace('_', ' ', $get_table_name); ?>?</h5>
+                        <h5 class="modal-title fw-bold text-capitalize" id="modalHapusTabelLabel"><span class="text-secondary">Drop table:</span> <?= str_replace('_', ' ', $_GET['name']); ?>?</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -96,17 +195,15 @@ if (isset($_GET['add_item'])) {
                     </div>
                     <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <a href="poll-delete?name=<?= $get_table_name; ?>" class="btn btn-danger">
+                        <a href="poll-delete?name=<?= $_GET['name']; ?>" class="btn btn-danger">
                             <i class="bi bi-x-circle"></i> Delete
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-
-
     <!-- ketika polling sudah ada yang aktif -->
-    <?php elseif($get_table_name !== $name_active_polling_s): ?>
+<?php elseif($_GET['name'] !== $activePolling['name']): ?>
         <div class="btn-group">
             <a href="#" class="btn btn-lg btn-secondary mt-5 disabled">
                 <i class="bi bi-check-circle"></i> Active
@@ -119,7 +216,7 @@ if (isset($_GET['add_item'])) {
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-light">
-                        <h5 class="modal-title fw-bold text-capitalize" id="staticBackdropLabel"><span class="text-secondary">Drop table:</span> <?= str_replace('_', ' ', $get_table_name); ?>?</h5>
+                        <h5 class="modal-title fw-bold text-capitalize" id="staticBackdropLabel"><span class="text-secondary">Drop table:</span> <?= str_replace('_', ' ', $_GET['name']); ?>?</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -127,7 +224,7 @@ if (isset($_GET['add_item'])) {
                     </div>
                     <div class="modal-footer bg-light">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <a href="poll-delete?name=<?= $get_table_name; ?>" class="btn btn-danger">
+                        <a href="poll-delete?name=<?= $_GET['name']; ?>" class="btn btn-danger" onclick="FormLoading()">
                             <i class="bi bi-x-circle"></i> Delete
                         </a>
                     </div>
@@ -144,14 +241,14 @@ if (isset($_GET['add_item'])) {
         <tr class="table-dark">
             <th>No</th>
             <th>Name</th>
-            <th>Gambar</th>
+            <th>Image</th>
             <th>Vote</th>
         </tr>
 
         <?php $i = 1; ?>
 
         <!-- Loop Table Item Polling -->
-        <?php foreach($rows_list_table as $row) :?>
+        <?php foreach($rowsListTable as $row) :?>
 
         <tr>
             <td><?php echo $i; ?></td>
@@ -160,15 +257,15 @@ if (isset($_GET['add_item'])) {
                 <div class="d-flex dip-delete-item">
 
                     <!-- Edit Poll item button -->
-                    <a href="poll-item?conf=edit&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>" class="me-2">Edit</a>
+                    <a href="poll-item?conf=edit&table_name=<?= $_GET['name']; ?>&id=<?= $row['id']; ?>" class="me-2">Edit</a>
 
                     <!-- Delete Poll item button -->
-                    <a href="poll-item?conf=delete&table_name=<?= $get_table_name; ?>&id=<?= $row['id']; ?>&img=<?= $row['polimg']; ?>" class="text-danger">Delete</a>
+                    <a href="poll-item?conf=delete&table_name=<?= $_GET['name']; ?>&id=<?= $row['id']; ?>&img=<?= $row['polimg']; ?>" class="text-danger" onclick="return confirm('delete item?')">Delete</a>
                 </div>
             </td>
             <td>
                 <!-- Modal Button See Img -->
-                <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#seeImg_<?= $row['id']; ?>"> See img</a>
+                <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#seeImg_<?= $row['id']; ?>">Img</a>
 
                 <!-- Modal See Img-->
                 <div class="modal fade" id="seeImg_<?= $row['id']; ?>" tabindex="-1" aria-labelledby="seeImgLabel" aria-hidden="true">
@@ -187,7 +284,7 @@ if (isset($_GET['add_item'])) {
                                 <img src="../assets/img/pollimg/<?php echo $row['polimg']; ?>" width="100%">
                         </div>
                     </div>
-                </div>        
+                </div>
             </td>
             <td>
                 <?php echo $row['polvote']; ?>
@@ -199,4 +296,11 @@ if (isset($_GET['add_item'])) {
         endforeach; ?>
     </table>
 </div>
+<script type="text/javascript">
+     var renameTable = document.getElementById('renameTable');
+     var btnRenameTable = document.getElementById('btnRenameTable');
+     btnRenameTable.addEventListener('click', function(){
+          renameTable.classList.toggle('d-block');
+     })
+</script>
 <?php require "template/main.php"; ?>

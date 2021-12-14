@@ -3,101 +3,137 @@ require "template/menu.php";
     $conf = $_GET['conf'];
     $table_name = $_GET['table_name'];
 
+    if ( isset( $_GET['table_name'] ) ) {
+         if ( mysqli_num_rows( mysqli_query( DB::$conn, "SELECT * FROM dipolling_list_table WHERE name='{$_GET['table_name']}'" ) ) !== 1 ) {
+               header( 'Location: polling' );
+         }
+     } else {
+         header( 'Location: polling' );
+     }
 
-    if (isset($_POST['addsubmit'])) {
+    if ( isset( $_REQUEST['addsubmit'] ) ) {
+         //cek kondisi field
+          if ( $_REQUEST['polname'] == "" && $_FILES['pollimgadd']['error'] > 0 ) {
+              header( "Location: poll?name=$table_name&add_item=fail" );
+          }
 
-        $dipMediaFotoExtension = ['jpg', 'png', 'jpeg'];
-        $dipMedia = new dipollingMedia($_FILES, '../assets/img/pollimg/', $dipMediaFotoExtension, 1000000);
-        $add_img_item = $dipMedia->addMedia('img');
-
+        $dipMedia = new MediaFiles( $_FILES, '../assets/img/pollimg/', ['jpg', 'png', 'jpeg'], 1000000, 'pollimgadd' );
+        $addImgItem = $dipMedia->SetAddMedia( 'img' );
         // Upload File
-        if ($add_img_item) {
-            $dipolling->addItemPoll($table_name, $_POST, $add_img_item);
-            header("Location: poll?name=$table_name&add=0&add_item=success");
-        }else{
-            header("Location: poll?name=$table_name&add=0&add_item=0");
-        }
+          if ( $addImgItem ) {
+               $dipollingItem = new PollingItem( $table_name, DB::$conn );
+               if ( $dipollingItem->SetAddItemPoll( $_REQUEST, $addImgItem ) > 0 ) {
+                 header( "Location: poll?name=$table_name&add_item=success" );
+               }
+          } else {
+               // redirect
+               header( "Location: poll?name=$table_name&add_item=0" );
+          }
+    } elseif ( isset( $_REQUEST['editsubmit'] ) ) {
 
-        // redirect
-        
-    }elseif(isset($_POST['editsubmit'])){
+          //cek kondisi field
+          if ( $_REQUEST['polname'] == "" && $_FILES['pollimgedit']['error'] > 0 ) {
+               header( "Location: poll?name=$table_name&edit_item=fail" );
+          }
 
         // init image
-        $dipMediaEditFotoExtension = ['jpg', 'png', 'jpeg'];
-        $dipMedia = new dipollingMedia($_FILES, '../assets/img/pollimg/', $dipMediaEditFotoExtension, 1000000);
-        if($_FILES['polimg']['name']){
-            //jika kosong berarti ganti baru
-            unlink('../assets/img/pollimg/' .  $_POST['oldpolimg']);
-            $pol_img = $dipMedia->addMedia('img');
-            // Upload File
-        }else{
-            $pol_img = $_POST['oldpolimg'];
-        }
-        $dipolling->editItemPoll($table_name, $_POST, $pol_img);
-        header("Location: poll?name=$table_name&edit_item=1&add=0");
+        $dipMedia = new MediaFiles( $_FILES, '../assets/img/pollimg/', ['jpg', 'png', 'jpeg'], 1000000, 'pollimgedit' );
+
+        // cek kondisi file kosong/tidak
+        if( $_FILES['pollimgedit']['name'] ){
+             $editImgItem = $dipMedia->SetAddMedia( 'img' );
+               if ( $editImgItem !== false ) {
+                    //jika kosong berarti ganti baru
+                    unlink( '../assets/img/pollimg/' .  $_REQUEST['oldpolimg'] );
+               }
+          } else {
+               // gunakan gambar lama
+               $editImgItem = $_REQUEST['oldpolimg'];
+          }
+
+          // Tambah item ke database
+          $dipollingItem = new PollingItem( $table_name, DB::$conn );
+          $dipollingItem->SetEditItemPoll( $_REQUEST, $editImgItem );
+
+          // cek apakah ada perubahan dalam database
+          if ( mysqli_affected_rows( DB::$conn ) == 1 ) {
+               header( "Location: poll?name=$table_name&edit_item=success" );
+          } else {
+               header( "Location: poll?name=$table_name&edit_item=fail" );
+          }
     }
 ?>
 
 <!-- cek apakah get conf kosong atau tidak -->
-<?php if(!empty($conf)): ?>
+<?php if( !empty( $conf ) ): ?>
 
-    <?php if ($conf === 'add'): ?>
-
-    <h2 class="fw-bold mb-5 text-capitalize"><span class="text-secondary">Add Item :</span> <?php echo str_replace("_", " ", $table_name); ?></h2>
+    <?php if ( $conf === 'add' ): ?>
+     <!-- Add page -->
+    <h2 class="fw-bold mb-5 text-capitalize"><span class="text-secondary">Add Item :</span> <?php echo str_replace( "_", " ", $table_name ); ?></h2>
     <hr>
     <p>&nbsp;</p>
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="<?= PageSelf(); ?>?table_name=<?= $table_name ?>&conf=add" method="post" enctype="multipart/form-data" onsubmit="FormLoading()">
         <label for="" class="control-label mb-3">Name</label>
-        <input type="text" name="polname" class="form-control" placeholder="Poll item name">
-        <label for="" class="control-label mb-3 mt-3">Item image</label>
-        <input type="file" name="polimg" class="form-control">
+        <input type="text" name="polname" class="form-control" placeholder="Poll item name" required>
+        <label for="" class="control-label mb-3 mt-3">Item image</label> <small class="text-secondary">Max 1MB ( .jpg, .png, .jpeg )</small>
+        <input type="file" name="pollimgadd" class="form-control" required>
         <button type="submit" name="addsubmit" class="btn btn-lg btn-primary mt-4">Add Item</button>
     </form>
-    <!-- Delete Page -->
-    <?php elseif ($conf === 'delete'): ?>
-        <?php
-        $id_item = $_GET['id'];
-        $img_item = $_GET['img'];
-        $show_polling->deleteFetch("DELETE FROM $table_name WHERE id=$id_item");
-        unlink('../assets/img/pollimg/'. $img_item);
-        header("Location: poll?name=$table_name&add=0&delete_item=1");
-        ?>
     <?php elseif ($conf === 'edit'): ?>
-        <?php 
-            $table_name = $_GET['table_name'];
-            $item_id = $_GET['id'];
-            $query = "SELECT * FROM $table_name WHERE id=$item_id";
-            $result_single = $show_polling->get_Query($query);
-            $fetch = $show_polling->singleFetch($result_single);
+         <!-- Edit item Page -->
+        <?php
+          if ($_GET['id'] !== "") {
+             $table_name = $_GET['table_name'];
+             $item_id = $_GET['id'];
+             $fetch = $showPolling->GetSingleFetch("SELECT * FROM $table_name WHERE id=$item_id");
+        }else{
+             header("Location: polling");
+        }
         ?>
     <!-- Edit Page -->
         <h2 class="fw-bold mb-5 text-capitalize"><span class="text-secondary">Edit Item :</span> <?php echo str_replace("_", " ", $table_name); ?></h2>
         <hr>
         <p>&nbsp;</p>
-        <form action="" method="post" enctype="multipart/form-data">
+        <form action="<?= PageSelf() ?>?conf=edit&table_name=<?= $table_name; ?>&id=<?= $item_id; ?>" method="post" enctype="multipart/form-data" onsubmit="FormLoading()">
             <input type="hidden" name="polid" value="<?= $fetch['id']; ?>">
             <input type="hidden" name="oldpolimg" value="<?= $fetch['polimg']; ?>">
+
+
             <label for="polname" class="control-label mb-3">Name</label>
             <input type="text" name="polname" class="form-control" placeholder="Name" value="<?= $fetch['polname']; ?>" id="polname" required>
-            <label for="polimg" class="control-label mb-3 mt-3">Item image</label>
-            <input type="file" name="polimg" class="form-control" id="polimg">
+
+            <label for="pollimgedit" class="control-label mb-3 mt-3">Item image</label> <small class="text-secondary">Max 1MB ( .jpg, .png, .jpeg )</small>
+            <input type="file" name="pollimgedit" class="form-control" id="pollimgedit">
+
             <div class="dip-current-img mt-4" id="current-img">
                 <img src="../assets/img/pollimg/<?= $fetch['polimg']; ?>">
                 <label for="current-img" class="mt-3 bg-dark text-light w-100 p-2">Current Image</label>
             </div>
+
             <button type="submit" name="editsubmit" class="btn btn-lg btn-primary mt-4">Edit Poll Item</button>
         </form>
 
-
+        <!-- Delete Page -->
+     <?php elseif ($conf === 'delete'): ?>
+          <?php
+          $id_item = $_GET['id'];
+          $img_item = $_GET['img'];
+          mysqli_query(DB::$conn, "DELETE FROM $table_name WHERE id=$id_item");
+          unlink('../assets/img/pollimg/'. $img_item);
+          header("Location: poll?name=$table_name&delete_item=1");
+          ?>
     <?php else: ?>
-        <!-- ketika kosong ataupun tidak ada dalam list akan redirect ke halaman polling.php -->
+
+        <!-- ketika get conf kosong ataupun tidak ada dalam list akan redirect ke halaman polling.php -->
         <?php header("Location: polling"); ?>
 
     <?php endif; ?>
 
 <?php else: ?>
+
     <!-- ketika kosong ataupun tidak ada dalam list akan redirect ke halaman polling.php -->
     <?php header("Location: polling"); ?>
+
 <?php endif; ?>
 
 <?php require "template/main.php"; ?>
