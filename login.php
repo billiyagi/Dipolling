@@ -1,4 +1,5 @@
 <?php
+
 // Cek Session
 session_start();
 ob_start();
@@ -41,14 +42,23 @@ if ( isset( $_REQUEST['submit_recovery'] ) ) {
 
 if ( isset( $_REQUEST['submit_forgot'] ) ) {
 
-     $email = $_REQUEST['email_forgot'];
+     // Filter Email
+     $email = htmlspecialchars(
+               strip_tags(
+                    filter_var($_REQUEST['email_forgot'], FILTER_VALIDATE_EMAIL)
+          )
+     );
 
-     if ( !is_null( $result = $fetching->GetSingleFetch("SELECT * FROM dipolling_users WHERE email='$email'") ) ) {
-          $newRecoveryKey = uniqid();
-          $recoveryPassword->SetMakeRecovery($result['email'], $newRecoveryKey);
-          $mail = new Mail();
-          $mail->SetSendMailRecovery($result['email'], $newRecoveryKey);
-          header("Location: login?forgot=success");
+     if ( $email ) {
+          if ( !is_null( $result = $fetching->GetSingleFetch("SELECT * FROM dipolling_users WHERE email='$email'") ) ) {
+               $newRecoveryKey = uniqid();
+               $recoveryPassword->SetMakeRecovery($result['email'], $newRecoveryKey);
+               $mail = new Mail();
+               $mail->SetSendMailRecovery($result['email'], $newRecoveryKey);
+               header("Location: login?forgot=success");
+          }else{
+               header("Location: login?forgot=failed");
+          }
      }else{
           header("Location: login?forgot=failed");
      }
