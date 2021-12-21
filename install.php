@@ -1,9 +1,13 @@
 <?php
+
 require_once 'core/function.php';
 session_start();
+
+// Check installation Session
 if ( !isset( $_SESSION['install'] ) ) {
      header("Location: index");
 }
+
 // Instalation process
 if ( isset( $_REQUEST['submit'] ) ) {
 
@@ -87,10 +91,6 @@ if ( isset( $_REQUEST['submit'] ) ) {
      // Buat Folder untuk penyimpanan gambar
      mkdir('assets/img/pollimg');
 
-
-
-     // Add User
-
      // Enkripsi
      $result_password = password_hash( $acc_password, PASSWORD_BCRYPT );
 
@@ -122,6 +122,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      header("Location: index");
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,11 +138,21 @@ if ( isset( $_REQUEST['submit'] ) ) {
      <!-- Bootstrap CSS -->
      <link rel="stylesheet" href="<?= HomeUrl() . '/assets/css/bootstrap.min.css'; ?>">
 
+     <!-- Bootstrap Icon -->
      <link rel="stylesheet" href="<?= HomeUrl() . '/assets/fonts/Bootstrap-Icon/bootstrap-icons.css'; ?>">
 
      <title>Dipolling Instalation</title>
 </head>
 <body class="bg-light">
+
+     <!-- Loading -->
+     <div id="dip-loader" class="d-none">
+          <div class="box-dip-loader text-center">
+               <div class="spinner-border mb-2 text-primary" role="status"></div>
+               <br>
+               <span class="text-secondary">Please Wait..</span>
+          </div>
+     </div>
 
      <div class="container">
           <h1 class="dip-brand text-secondary text-center mt-5 mb-5" style="font-size: 3.5rem;">Dipolling</h1>
@@ -150,7 +161,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
                <form action="<?= PageSelf(); ?>" method="post" enctype="multipart/form-data">
 
                     <!-- Database Instalation -->
-                    <div class="database">
+                    <section class="database">
                          <h3 class="fw-bold mb-3">Database</h3>
 
                          <!-- Host Name -->
@@ -167,15 +178,13 @@ if ( isset( $_REQUEST['submit'] ) ) {
                               <input type="text" name="database_username" class="form-control mb-3" placeholder="Database Username" required>
                               <input type="password" name="database_password" class="form-control mb-3" placeholder="Database Password">
                          </div>
-                    </div>
+                    </section>
 
                     <hr>
 
-
                     <!-- Account Instalation -->
-                    <div class="acccount">
+                    <section class="acccount">
                          <h3 class="fw-bold mb-3 mt-5">Account</h3>
-                         <form action="" method="post" onsubmit="FormLoading()">
 
                          <!-- Name Account -->
                          <label for="#name" class="control-label mb-2">Name</label>
@@ -191,13 +200,13 @@ if ( isset( $_REQUEST['submit'] ) ) {
                               <input type="text" name="account_username" class="form-control mb-3" placeholder=" Username" required>
                               <input type="password" name="account_password" class="form-control mb-3" placeholder="Password" required>
                          </div>
-                    </div>
+                    </section>
 
                     <hr>
 
                     <!-- Settings instalation -->
 
-                    <div class="settings">
+                    <section class="settings">
                          <h3 class="fw-bold mb-3 mt-5">Site Settings</h3>
 
                          <!-- Site Name -->
@@ -208,12 +217,13 @@ if ( isset( $_REQUEST['submit'] ) ) {
                          <label for="#siteIcon" class="control-label mb-2">Site Icon</label>
                          <input type="file" name="site_icon" class="form-control mb-3" placeholder="Site Icon" id="siteIcon" required>
 
-                    </div>
+                    </section>
+
+                    <!-- Submit -->
                     <button type="submit" name="submit" class="btn btn-lg btn-primary mt-5">Instal Now</button>
                </form>
-
           </div>
      </div>
-
+     <script src="assets/js/dipolling.js"></script>
 </body>
 </html>
