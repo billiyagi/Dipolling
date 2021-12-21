@@ -3,6 +3,14 @@ require "template/menu.php";
 
 $rows = $showPolling->GetLoopFetch( "SELECT * FROM dipolling_list_table ORDER BY polling_active DESC" );
 
+if ( isset($_GET['q']) ) {
+     $keyword = $_GET['q'];
+     $sql = "SELECT * FROM dipolling_list_table WHERE name LIKE '%$keyword%'
+      ORDER BY polling_active DESC";
+
+      $rows = $showPolling->GetLoopFetch( $sql );
+}
+
 // Tambah Tabel polling
 if( isset( $_REQUEST['submit'] ) ) {
      // Filter
@@ -59,6 +67,7 @@ if ( mysqli_num_rows( mysqli_query( DB::$conn, "SELECT * FROM dipolling_list_tab
      menggunakan fungsi ShowNotify() untuk menjalankannya dengan membutuhkan 2
      parameter wajib yaitu ShowNotify( bool [True | False], string [pesan umpan balik] )
 */
+
 // Notifikasi aktivasi polling
 if ( isset( $_GET['activate'] ) ) {
     echo ShowNotify( true,'Table ' . str_replace( '_', ' ', $_GET['table_name'] ) . ' activated' );
@@ -133,8 +142,9 @@ if ( isset( $_GET['activate'] ) ) {
           </div>
     </div>
 
-    <!-- Add Polling button -->
-     <a href="#" class="btn btn-lg btn-success mt-5" data-bs-toggle="modal" data-bs-target="#addPollings"><i class="bi bi-journals"></i> Add Polling</a>
+
+     <!-- Add Polling button -->
+     <a href="#" class="btn btn-lg btn-success mt-5 mb-2" data-bs-toggle="modal" data-bs-target="#addPollings"><i class="bi bi-journals"></i> Add Polling</a>
 
      <!-- Add Polling Modal -->
      <div class="modal fade" id="addPollings" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -158,13 +168,36 @@ if ( isset( $_GET['activate'] ) ) {
           </div>
      </div>
 <?php if (!$rows): ?>
+
+     <?php if(isset($_GET['q'])) : ?>
+     <!-- Search Form -->
+     <form action="<?= $_SERVER['PHP_SELF']; ?>" class="mt-4">
+          <input type="text" name="q" placeholder="Search Polling .." class="form-control h-100" value="<?= ( isset($_GET['q']) ) ? $_GET['q'] : ""; ?>">
+     </form>
+     <?php endif; ?>
+
     <div class="dip-empty-polling mt-5 mb-5">
         <img src="../assets/img/mg/undraw_no_data_re_kwbl.svg" alt="No data">
-        <span class="fw-bold fs-4 text-secondary mt-3 d-block">Create your Polling now!</span>
+        <span class="fw-bold fs-4 text-secondary mt-3 d-block">
+
+          <!-- Polling message -->
+             <?php if( isset($_GET['q']) ) {
+                  echo "Polling " . $_GET['q'] . " Not found";
+             }else{
+               echo "Create your Polling Now!";
+             }?>
+
+          </span>
     </div>
 <?php else: ?>
+
+     <!-- Search Form -->
+     <form action="<?= $_SERVER['PHP_SELF']; ?>" class="mt-4">
+          <input type="text" name="q" placeholder="Search Polling .." class="form-control h-100" value="<?= ( isset($_GET['q']) ) ? $_GET['q'] : ""; ?>">
+     </form>
+
     <div class="table-responsive">
-        <table class="table mt-5">
+        <table class="table mt-3">
             <tr class="table-dark">
                 <th>No</th>
                 <th>Polling Table</th>
