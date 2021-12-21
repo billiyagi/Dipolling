@@ -120,7 +120,7 @@ $setting = $showPolling->GetSingleFetch( "SELECT * FROM dipolling_settings" );
     <div class="dip-brand">
         Dipolling
     </div>
-    <small class="d-block text-secondary dip-version">version 2.0.0</small>
+    <small class="d-block text-secondary dip-version">version 2.0.1</small>
     </div>
     <!-- This is Copyright Under MIT License (c)
     DO NOT REMOVE IT -->
