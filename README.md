@@ -6,6 +6,10 @@
 ### About
 Polling is a website-based application that functions to create a poll/voting with a display that focuses on convenience when choosing votes/votes and a complete and free admin dashboard.
 
+<a href="https://github.com/billiyagi/Dipolling/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/billiyagi/Dipolling"></a>
+<a href="https://github.com/billiyagi/Dipolling/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/billiyagi/Dipolling"></a>
+<a href="https://github.com/billiyagi/Dipolling/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/billiyagi/Dipolling"></a>
+
 ### Features
 The following features are:
 
