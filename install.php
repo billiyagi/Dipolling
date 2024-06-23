@@ -4,36 +4,36 @@ require_once 'core/function.php';
 session_start();
 
 // Check installation Session
-if ( !isset( $_SESSION['install'] ) ) {
-     header("Location: index");
+if (!isset($_SESSION['install'])) {
+     header("Location: index.php");
 }
 
 // Instalation process
-if ( isset( $_REQUEST['submit'] ) ) {
+if (isset($_REQUEST['submit'])) {
 
      // Database
-     $db_host = htmlspecialchars( $_REQUEST['database_host'] );
-     $db_name = htmlspecialchars( $_REQUEST['database_name'] );
-     $db_username = htmlspecialchars( $_REQUEST['database_username'] );
-     $db_password = htmlspecialchars( $_REQUEST['database_password'] );
+     $db_host = htmlspecialchars($_REQUEST['database_host']);
+     $db_name = htmlspecialchars($_REQUEST['database_name']);
+     $db_username = htmlspecialchars($_REQUEST['database_username']);
+     $db_password = htmlspecialchars($_REQUEST['database_password']);
 
      // Account
-     $acc_name = htmlspecialchars( $_REQUEST['account_name'] );
-     $acc_email = htmlspecialchars( $_REQUEST['account_email'] );
-     $acc_username = htmlspecialchars( $_REQUEST['account_username'] );
-     $acc_password = htmlspecialchars( $_REQUEST['account_password'] );
+     $acc_name = htmlspecialchars($_REQUEST['account_name']);
+     $acc_email = htmlspecialchars($_REQUEST['account_email']);
+     $acc_username = htmlspecialchars($_REQUEST['account_username']);
+     $acc_password = htmlspecialchars($_REQUEST['account_password']);
 
      // Site settings
-     $settings_site_name = htmlspecialchars( $_REQUEST['site_name'] );
+     $settings_site_name = htmlspecialchars($_REQUEST['site_name']);
 
 
      // Create Configuration
      $myfile = fopen("core/config.php", "w");
      $txt = "<?php
-     $"."db_host_name = '$db_host';
-     $"."db_username = '$db_username';
-     $"."db_password = '$db_password';
-     $"."db_name = '$db_name';
+     $" . "db_host_name = '$db_host';
+     $" . "db_username = '$db_username';
+     $" . "db_password = '$db_password';
+     $" . "db_name = '$db_name';
      ?>";
      fwrite($myfile, $txt);
      fclose($myfile);
@@ -44,7 +44,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      // Buat tabel: dipolling_list_table
      $query_list_table = 'CREATE TABLE dipolling_list_table (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(150), polling_active INT(5))';
 
-     if ( !mysqli_query(DB::$conn, $query_list_table) ) {
+     if (!mysqli_query(DB::$conn, $query_list_table)) {
           header("Location: install.php?failed=table_list");
      }
 
@@ -52,7 +52,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      // Buat tabel: dipolling_users
      $query_dipolling_users = 'CREATE TABLE dipolling_users (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(150), name VARCHAR(255), username VARCHAR(255), password VARCHAR(355))';
 
-     if ( !mysqli_query(DB::$conn, $query_dipolling_users) ) {
+     if (!mysqli_query(DB::$conn, $query_dipolling_users)) {
           header("Location: install.php?failed=table_users");
      }
 
@@ -60,7 +60,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      // Buat tabel: dipolling_settings
      $query_dipolling_settings = 'CREATE TABLE dipolling_settings (settings_profile VARCHAR(255) PRIMARY KEY, site_name VARCHAR(255), site_icon VARCHAR(255), site_poll_icon VARCHAR(255), survey_template VARCHAR(255), site_hide_login INT(5), site_maintenance INT(5))';
 
-     if ( !mysqli_query(DB::$conn, $query_dipolling_settings) ) {
+     if (!mysqli_query(DB::$conn, $query_dipolling_settings)) {
           header("Location: install.php?failed=table_settings");
      }
 
@@ -68,7 +68,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      // Buat tabel: dipolling_survey
      $query_dipolling_survey = 'CREATE TABLE dipolling_survey (id INT AUTO_INCREMENT PRIMARY KEY, survey_key VARCHAR(255), survey_question VARCHAR(255), survey_img VARCHAR(255), survey_status INT(2))';
 
-     if ( !mysqli_query(DB::$conn, $query_dipolling_survey) ) {
+     if (!mysqli_query(DB::$conn, $query_dipolling_survey)) {
           header("Location: install.php?failed=table_survey");
      }
 
@@ -76,7 +76,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      // Buat tabel: dipolling_survey_answer
      $query_dipolling_survey_answer = 'CREATE TABLE dipolling_survey_answer (id INT AUTO_INCREMENT PRIMARY KEY, survey_id INT, survey_answer VARCHAR(3000), survey_date VARCHAR(255))';
 
-     if ( !mysqli_query(DB::$conn, $query_dipolling_survey_answer) ) {
+     if (!mysqli_query(DB::$conn, $query_dipolling_survey_answer)) {
           header("Location: install.php?failed=table_survey_answer");
      }
 
@@ -84,7 +84,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      // Buat tabel: dipolling_mail_recovery
      $query_dipolling_mail_recovery = 'CREATE TABLE dipolling_mail_recovery (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(255), recovery_key VARCHAR(255))';
 
-     if ( !mysqli_query(DB::$conn, $query_dipolling_mail_recovery) ) {
+     if (!mysqli_query(DB::$conn, $query_dipolling_mail_recovery)) {
           header("Location: install.php?failed=table_mail_recovery");
      }
 
@@ -92,11 +92,11 @@ if ( isset( $_REQUEST['submit'] ) ) {
      mkdir('assets/img/pollimg');
 
      // Enkripsi
-     $result_password = password_hash( $acc_password, PASSWORD_BCRYPT );
+     $result_password = password_hash($acc_password, PASSWORD_BCRYPT);
 
      $query_account = "INSERT INTO dipolling_users VALUES( NULL, '$acc_email', '$acc_name' ,'$acc_username', '$result_password' )";
 
-     if ( !mysqli_query( DB::$conn, $query_account ) ) {
+     if (!mysqli_query(DB::$conn, $query_account)) {
           header("Location: install.php?failed=account");
      }
 
@@ -109,7 +109,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
      $min = -1;
      $query_settings = "INSERT INTO dipolling_settings VALUES( 'primary', '$settings_site_name', '$settings_site_icon', 'ok.png', 'top', $min, $min )";
 
-     if ( !mysqli_query( DB::$conn, $query_settings ) ) {
+     if (!mysqli_query(DB::$conn, $query_settings)) {
           header("Location: install.php?failed=settings");
      }
 
@@ -125,12 +125,13 @@ if ( isset( $_REQUEST['submit'] ) ) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-     <link rel="icon" href="<?= HomeUrl() . '/assets/img/mg/dipolling.ico'?>" type="image/x-icon">
+     <link rel="icon" href="<?= HomeUrl() . '/assets/img/mg/dipolling.ico' ?>" type="image/x-icon">
 
      <!-- Internal CSS -->
      <link rel="stylesheet" href="<?= HomeUrl() . '/assets/css/dipolling.css'; ?>">
@@ -143,6 +144,7 @@ if ( isset( $_REQUEST['submit'] ) ) {
 
      <title>Dipolling Instalation</title>
 </head>
+
 <body class="bg-light">
 
      <!-- Loading -->
@@ -226,4 +228,5 @@ if ( isset( $_REQUEST['submit'] ) ) {
      </div>
      <script src="assets/js/dipolling.js"></script>
 </body>
+
 </html>
